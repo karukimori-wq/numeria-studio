@@ -24,8 +24,8 @@ const templateTypes = [
 ];
 const storeKey = 'numeria-report-form';
 
-let form = loadForm();
-if (!form.reportBody) form.reportBody = buildReport(form);
+let form;
+
 
 function loadForm() {
   try {
@@ -175,5 +175,9 @@ function updateStatus() {
 function escapeHtml(value) {
   return String(value).replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[character]));
 }
+
+
+form = loadForm();
+if (!form.reportBody) form.reportBody = buildReport(form);
 
 render();
