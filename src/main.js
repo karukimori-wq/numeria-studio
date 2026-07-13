@@ -23,7 +23,9 @@ const templateTypes = [
   { value: 'short', label: '初回相談ショート版' },
 ];
 const storeKey = 'numeria-report-form';
+
 let form;
+
 
 function loadForm() {
   try {
@@ -174,6 +176,8 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[character]));
 }
 
+
 form = loadForm();
 if (!form.reportBody) form.reportBody = buildReport(form);
+
 render();
