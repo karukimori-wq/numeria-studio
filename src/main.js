@@ -23,6 +23,14 @@ const templateTypes = [
   { value: 'short', label: '初回相談ショート版' },
 ];
 const storeKey = 'numeria-report-form';
+const contractStatus = {
+  identityMode: 'workspaceId + userId',
+  owns: ['Session', 'Report', '鑑定メモ'],
+  referencesOnly: ['Growth Engine の customerId / reservationId', 'AI Activity の activityId'],
+  notOwned: ['Customer', 'Payment', 'Sales', 'MessageDraft', 'Velvet Visit / Memory / Note'],
+  neverShare: ['支払い状態', '売上金額', 'Report本文', '全文メモ', 'APIキー', '機密Prompt'],
+  events: ['studio.session.started.v1', 'studio.report.generated.v1'],
+};
 
 let form;
 
@@ -93,6 +101,10 @@ function objectOptionTags(values, selected) {
   return values.map(({ value, label }) => `<option value="${value}" ${value === selected ? 'selected' : ''}>${label}</option>`).join('');
 }
 
+function listItems(values) {
+  return values.map((value) => `<li>${escapeHtml(value)}</li>`).join('');
+}
+
 function render() {
   document.querySelector('#root').innerHTML = `
     <main class="app-shell">
@@ -116,6 +128,14 @@ function render() {
           <label>対象期間<input data-field="actionPeriod" value="${escapeHtml(form.actionPeriod)}" /></label>
           <label>相談内容<textarea data-field="concern" placeholder="相談者の悩みや背景を入力">${escapeHtml(form.concern)}</textarea></label>
           <label>鑑定メモ<textarea data-field="resultNotes" placeholder="カード結果、星回り、数秘の解釈など">${escapeHtml(form.resultNotes)}</textarea></label>
+          <section class="contract-note" aria-label="連携メモ">
+            <h3>連携メモ</h3>
+            <p>Numeria Studio は鑑定とReportを作る場所です。お客様台帳、支払い、売上、Velvetの記録は持ちません。</p>
+            <dl>
+              <div><dt>受け取るID</dt><dd>${escapeHtml(contractStatus.referencesOnly[0])}</dd></div>
+              <div><dt>外へ返すID</dt><dd>sessionId / reportId</dd></div>
+            </dl>
+          </section>
         </form>
         <section class="panel report-panel">
           <div class="report-header">
@@ -130,6 +150,30 @@ function render() {
             </div>
           </div>
           <textarea class="report-editor" data-field="reportBody">${escapeHtml(form.reportBody)}</textarea>
+          <section class="contract-panel" aria-label="契約ステータス">
+            <div>
+              <h3>他アプリとの役割</h3>
+              <p>Velvet が追加されても、Numeria Studio は Session / Report の担当です。Velvet の Visit / Memory / Note は参照・保存しません。</p>
+            </div>
+            <div class="contract-grid">
+              <div>
+                <h4>Numeriaが持つもの</h4>
+                <ul>${listItems(contractStatus.owns)}</ul>
+              </div>
+              <div>
+                <h4>持たないもの</h4>
+                <ul>${listItems(contractStatus.notOwned)}</ul>
+              </div>
+              <div>
+                <h4>外に出さないもの</h4>
+                <ul>${listItems(contractStatus.neverShare)}</ul>
+              </div>
+              <div>
+                <h4>イベント</h4>
+                <ul>${listItems(contractStatus.events)}</ul>
+              </div>
+            </div>
+          </section>
         </section>
       </div>
     </main>`;
