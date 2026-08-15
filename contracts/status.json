@@ -67,7 +67,9 @@
     "paymentStatusAccepted": false,
     "salesAmountAccepted": false,
     "supportsGrowthEngineScreenStart": true,
-    "returnAfterCompletionUsesRefsOnly": true
+    "returnAfterCompletionUsesRefsOnly": true,
+    "supportsSessionCompletion": true,
+    "supportsReferenceOnlyExport": true
   },
   "staticEndpoints": {
     "health": "/health",
