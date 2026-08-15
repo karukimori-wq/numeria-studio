@@ -26,9 +26,9 @@ const storeKey = 'numeria-report-form';
 const contractStatus = {
   identityMode: 'workspaceId + userId',
   owns: ['Session', 'Report', '鑑定メモ'],
-  referencesOnly: ['Growth Engine の customerId / reservationId', 'AI Activity の activityId'],
-  notOwned: ['Customer', 'Payment', 'Sales', 'MessageDraft', 'Velvet Visit / Memory / Note'],
-  neverShare: ['支払い状態', '売上金額', 'Report本文', '全文メモ', 'APIキー', '機密Prompt'],
+  referencesOnly: ['Growth Engine の customerId / reservationId', 'AI Activity の activityId', 'Communication Planner の conversationId / replyDraftId'],
+  notOwned: ['Customer', 'Payment', 'Sales', 'MessageDraft', 'Velvet Visit / Memory / Note', 'Conversation / Message', 'ReplyDraft / SafetyCheck'],
+  neverShare: ['支払い状態', '売上金額', 'Report本文', '鑑定本文', '会話本文', '全文メモ', 'APIキー', '機密Prompt'],
   events: ['studio.session.started.v1', 'studio.report.generated.v1'],
 };
 
@@ -130,10 +130,10 @@ function render() {
           <label>鑑定メモ<textarea data-field="resultNotes" placeholder="カード結果、星回り、数秘の解釈など">${escapeHtml(form.resultNotes)}</textarea></label>
           <section class="contract-note" aria-label="連携メモ">
             <h3>連携メモ</h3>
-            <p>Numeria Studio は鑑定とReportを作る場所です。お客様台帳、支払い、売上、Velvetの記録は持ちません。</p>
+            <p>Numeria Studio は鑑定とReportを作る場所です。お客様台帳、支払い、売上、会話、返信、安全確認、Velvetの記録は持ちません。</p>
             <dl>
               <div><dt>受け取るID</dt><dd>${escapeHtml(contractStatus.referencesOnly[0])}</dd></div>
-              <div><dt>外へ返すID</dt><dd>sessionId / reportId</dd></div>
+              <div><dt>外へ返すID</dt><dd>sessionId / reportId / customerId</dd></div>
             </dl>
           </section>
         </form>
@@ -153,7 +153,7 @@ function render() {
           <section class="contract-panel" aria-label="契約ステータス">
             <div>
               <h3>他アプリとの役割</h3>
-              <p>Velvet が追加されても、Numeria Studio は Session / Report の担当です。Velvet の Visit / Memory / Note は参照・保存しません。</p>
+              <p>Communication Planner が追加されても、Numeria Studio は Session / Report の担当です。会話、返信、SafetyCheck は参照IDだけ扱い、本文は渡しません。</p>
             </div>
             <div class="contract-grid">
               <div>
