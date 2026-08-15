@@ -10,6 +10,11 @@ const initialForm = {
   actionPeriod: '今後3か月',
   reportBody: '',
   reportDirty: false,
+  growthContext: null,
+  sessionId: '',
+  sessionStatus: '',
+  reportId: '',
+  reportStatus: '',
 };
 
 const themes = ['恋愛・パートナーシップ', '復縁・片思い', '仕事・キャリア', '人間関係', '金運・豊かさ', '総合運'];
@@ -23,13 +28,15 @@ const templateTypes = [
   { value: 'short', label: '初回相談ショート版' },
 ];
 const storeKey = 'numeria-report-form';
+const allowedGrowthRefs = ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent', 'traceId', 'correlationId', 'returnUrl'];
+const blockedGrowthFields = ['name', 'clientName', 'email', 'paymentStatus', 'salesAmount', 'fullMeetingTranscript', 'fullReportBody', 'apiKey', 'secretPrompt'];
 const contractStatus = {
   identityMode: 'workspaceId + userId',
   owns: ['Session', 'Report', '鑑定メモ'],
   referencesOnly: ['Growth Engine の customerId / reservationId', 'AI Activity の activityId', 'Communication Planner の conversationId / replyDraftId'],
   notOwned: ['Customer', 'Payment', 'Sales', 'MessageDraft', 'Velvet Visit / Memory / Note', 'Conversation / Message', 'ReplyDraft / SafetyCheck'],
   neverShare: ['支払い状態', '売上金額', 'Report本文', '鑑定本文', '会話本文', '全文メモ', 'APIキー', '機密Prompt'],
-  events: ['studio.session.started.v1', 'studio.report.generated.v1'],
+  events: ['studio.session.started.v1', 'studio.session.completed.v1', 'studio.report.generated.v1'],
 };
 
 let form;
@@ -45,6 +52,35 @@ function loadForm() {
 
 function saveForm() {
   localStorage.setItem(storeKey, JSON.stringify(form));
+}
+
+function createId(prefix) {
+  if (globalThis.crypto?.randomUUID) return `${prefix}_${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`;
+  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function readGrowthContextFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const refs = {};
+  allowedGrowthRefs.forEach((key) => {
+    const value = params.get(key);
+    if (value) refs[key] = value;
+  });
+  const ignoredFields = blockedGrowthFields.filter((key) => params.has(key));
+  if (!Object.keys(refs).length && !ignoredFields.length) return null;
+  return {
+    ...refs,
+    sourceApp: 'growth-engine',
+    acceptedRefs: Object.keys(refs).filter((key) => key !== 'returnUrl'),
+    ignoredFields,
+    receivedAt: new Date().toISOString(),
+  };
+}
+
+function mergeUrlContext(currentForm) {
+  const urlContext = readGrowthContextFromUrl();
+  if (!urlContext) return currentForm;
+  return { ...currentForm, growthContext: { ...(currentForm.growthContext || {}), ...urlContext } };
 }
 
 function calcLifePath(birthday) {
@@ -105,51 +141,146 @@ function listItems(values) {
   return values.map((value) => `<li>${escapeHtml(value)}</li>`).join('');
 }
 
+function renderRefRows(context) {
+  if (!context) {
+    return '<p class="muted">Growth Engine から開始された場合、workspaceId / userId / reservationId / customerId がここに表示されます。</p>';
+  }
+  const rows = ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent']
+    .filter((key) => context[key])
+    .map((key) => `<div><dt>${escapeHtml(key)}</dt><dd><code>${escapeHtml(context[key])}</code></dd></div>`)
+    .join('');
+  return `<dl class="ref-list">${rows || '<div><dt>refs</dt><dd>参照IDなし</dd></div>'}</dl>`;
+}
+
+function buildSessionUrl() {
+  if (!form.sessionId) return '#report-editor';
+  const url = new URL(`/app/sessions/${form.sessionId}/`, window.location.origin);
+  const refs = {
+    workspaceId: form.growthContext?.workspaceId,
+    userId: form.growthContext?.userId,
+    reservationId: form.growthContext?.reservationId,
+    customerId: form.growthContext?.customerId,
+    sessionId: form.sessionId,
+    reportId: form.reportId,
+    sourceApp: 'numeria-studio',
+  };
+  Object.entries(refs).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+  });
+  return url.pathname + url.search;
+}
+
+function buildGrowthReturnUrl() {
+  const returnUrl = form.growthContext?.returnUrl;
+  if (!returnUrl || !form.sessionId) return '';
+  try {
+    const url = new URL(returnUrl, window.location.origin);
+    const refs = {
+      workspaceId: form.growthContext?.workspaceId,
+      userId: form.growthContext?.userId,
+      reservationId: form.growthContext?.reservationId,
+      customerId: form.growthContext?.customerId,
+      sessionId: form.sessionId,
+      reportId: form.reportId,
+      reportRef: form.reportId ? `report:${form.reportId}` : '',
+      sourceApp: 'numeria-studio',
+      status: 'success',
+      sessionStatus: form.sessionStatus || '',
+      reportStatus: form.reportStatus || '',
+    };
+    Object.entries(refs).forEach(([key, value]) => {
+      if (value) url.searchParams.set(key, value);
+    });
+    return url.toString();
+  } catch {
+    return '';
+  }
+}
+
+function renderGrowthStartPanel() {
+  const context = form.growthContext;
+  const returnUrl = buildGrowthReturnUrl();
+  const sessionUrl = buildSessionUrl();
+  const ignored = context?.ignoredFields?.length
+    ? `<p class="warning">受け取り対象外の項目を無視しました: ${context.ignoredFields.map(escapeHtml).join(', ')}</p>`
+    : '';
+  const sessionSummary = form.sessionId
+    ? `<div class="result-box">
+        <div><span>sessionId</span><code>${escapeHtml(form.sessionId)}</code></div>
+        <div><span>sessionStatus</span><code>${escapeHtml(form.sessionStatus || 'started')}</code></div>
+        <div><span>reportId</span><code>${escapeHtml(form.reportId)}</code></div>
+        <div><span>reportStatus</span><code>${escapeHtml(form.reportStatus || 'draft')}</code></div>
+        <div><span>reportRef</span><code>${escapeHtml(form.reportId ? `report:${form.reportId}` : '')}</code></div>
+        <div><span>eventName</span><code>studio.session.started.v1</code></div>
+      </div>`
+    : '';
+  return `
+    <section class="panel start-panel" aria-label="Growth Engine から開始">
+      <div>
+        <p class="eyebrow small">Growth Engine Start</p>
+        <h2>予約から鑑定を開始</h2>
+        <p class="muted">受け取るのは参照IDのみです。個人名、支払い情報、売上、Report本文、全文カルテは受け取りません。</p>
+      </div>
+      ${renderRefRows(context)}
+      ${ignored}
+      <div class="start-actions">
+        <button data-action="start-session" type="button">${form.sessionId ? 'Sessionを再確認' : 'Sessionを開始'}</button>
+        ${form.sessionId ? `<a class="button-link" href="${escapeHtml(sessionUrl)}">鑑定作成へ進む</a>` : ''}
+        ${form.sessionId ? '<a class="button-link secondary" href="#report-editor" data-action="generate-report-link">Report作成へ進む</a>' : ''}
+        ${returnUrl ? `<a class="button-link dark" href="${escapeHtml(returnUrl)}">Growth Engineのフォロー画面へ戻る</a>` : ''}
+      </div>
+      ${sessionSummary}
+      ${form.sessionId ? '<p class="excluded-fields">Growth Engineへ返さない項目: reportBody / pdfBody / clientName / paymentStatus / salesAmount / fullMeetingTranscript</p>' : ''}
+    </section>`;
+}
+
 function render() {
+  const isSessionRoute = window.location.pathname.startsWith('/app/sessions/');
   document.querySelector('#root').innerHTML = `
     <main class="app-shell">
       <section class="hero">
         <div>
-          <p class="eyebrow">✦ Numeria Studio</p>
-          <h1>占い師向け鑑定書ツール</h1>
-          <p class="lead">相談内容と鑑定メモを入力し、用途別テンプレートで下書きを生成。本文はそのまま編集して納品できます。</p>
+          <p class="eyebrow">Numeria Studio</p>
+          <h1>${isSessionRoute ? '鑑定作成画面' : '鑑定SessionとReportを作成'}</h1>
+          <p class="lead">${isSessionRoute ? 'Session単位で鑑定メモとReportを編集します。Growth Engineへ返す場合も参照IDのみを使います。' : 'Growth Engine の予約参照IDから鑑定を開始し、Numeria Studio内でReportを作成します。外部へ返すのは sessionId / reportId などの参照IDだけです。'}</p>
         </div>
-        <button class="ghost-button" data-action="reset">↻ リセット</button>
+        <button class="ghost-button" data-action="reset">リセット</button>
       </section>
+      ${renderGrowthStartPanel()}
       <div class="workspace">
         <form class="panel input-panel">
           <h2>鑑定情報</h2>
-          <label>お名前<input data-field="clientName" value="${escapeHtml(form.clientName)}" placeholder="例：山田 花子" /></label>
+          <label>お名前<input data-field="clientName" value="${escapeHtml(form.clientName)}" placeholder="Growth未接続時のローカル下書き" /></label>
           <label>生年月日<input data-field="birthday" type="date" value="${form.birthday}" /></label>
           <label>テンプレート<select data-field="templateType">${objectOptionTags(templateTypes, form.templateType)}</select></label>
           <label>テーマ<select data-field="theme">${optionTags(themes, form.theme)}</select></label>
           <label>占術<select data-field="method">${optionTags(methods, form.method)}</select></label>
           <label>文章トーン<select data-field="tone">${optionTags(tones, form.tone)}</select></label>
           <label>対象期間<input data-field="actionPeriod" value="${escapeHtml(form.actionPeriod)}" /></label>
-          <label>相談内容<textarea data-field="concern" placeholder="相談者の悩みや背景を入力">${escapeHtml(form.concern)}</textarea></label>
+          <label>相談内容<textarea data-field="concern" placeholder="鑑定時点のsnapshotとして扱うメモ">${escapeHtml(form.concern)}</textarea></label>
           <label>鑑定メモ<textarea data-field="resultNotes" placeholder="カード結果、星回り、数秘の解釈など">${escapeHtml(form.resultNotes)}</textarea></label>
           <section class="contract-note" aria-label="連携メモ">
             <h3>連携メモ</h3>
             <p>Numeria Studio は鑑定とReportを作る場所です。お客様台帳、支払い、売上、会話、返信、安全確認、Velvetの記録は持ちません。</p>
             <dl>
               <div><dt>受け取るID</dt><dd>${escapeHtml(contractStatus.referencesOnly[0])}</dd></div>
-              <div><dt>外へ返すID</dt><dd>sessionId / reportId / customerId</dd></div>
+              <div><dt>外へ返すID</dt><dd>sessionId / reportId / reportRef</dd></div>
             </dl>
           </section>
         </form>
         <section class="panel report-panel">
           <div class="report-header">
             <div>
-              <h2>📄 編集できる鑑定書</h2>
+              <h2>編集できるReport</h2>
               <p class="status-text">${form.reportDirty ? '手動編集済み。再生成すると本文が上書きされます。' : '入力内容から生成された本文です。'}</p>
             </div>
             <div class="actions">
-              <button data-action="regenerate" type="button">✨ 再生成</button>
-              <button data-action="copy" type="button">📋 コピー</button>
-              <button data-action="print" type="button">🖨 印刷</button>
+              <button data-action="regenerate" type="button">再生成</button>
+              <button data-action="copy" type="button">コピー</button>
+              <button data-action="print" type="button">印刷</button>
             </div>
           </div>
-          <textarea class="report-editor" data-field="reportBody">${escapeHtml(form.reportBody)}</textarea>
+          <textarea id="report-editor" class="report-editor" data-field="reportBody">${escapeHtml(form.reportBody)}</textarea>
           <section class="contract-panel" aria-label="契約ステータス">
             <div>
               <h3>他アプリとの役割</h3>
@@ -193,22 +324,51 @@ function bindEvents() {
     saveForm();
     updateStatus();
   }));
+  document.querySelector('[data-action="start-session"]').addEventListener('click', startSession);
   document.querySelector('[data-action="regenerate"]').addEventListener('click', () => {
-    form = { ...form, reportBody: buildReport(form), reportDirty: false };
-    saveForm();
-    render();
+    regenerateReport();
+  });
+  document.querySelector('[data-action="generate-report-link"]')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    regenerateReport();
+    requestAnimationFrame(() => document.querySelector('#report-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   });
   document.querySelector('[data-action="reset"]').addEventListener('click', () => {
-    form = { ...initialForm, reportBody: buildReport(initialForm), reportDirty: false };
+    form = mergeUrlContext({ ...initialForm, reportBody: buildReport(initialForm), reportDirty: false });
     localStorage.removeItem(storeKey);
+    saveForm();
     render();
   });
   document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
   document.querySelector('[data-action="copy"]').addEventListener('click', async (event) => {
     await navigator.clipboard.writeText(form.reportBody);
-    event.target.textContent = '✓ コピー済み';
-    setTimeout(() => { event.target.textContent = '📋 コピー'; }, 1600);
+    event.target.textContent = 'コピー済み';
+    setTimeout(() => { event.target.textContent = 'コピー'; }, 1600);
   });
+}
+
+function startSession() {
+  form = {
+    ...form,
+    sessionId: form.sessionId || createId('session'),
+    sessionStatus: 'started',
+    reportId: form.reportId || createId('report'),
+    reportStatus: form.reportStatus || 'draft',
+  };
+  saveForm();
+  render();
+}
+
+function regenerateReport() {
+  form = {
+    ...form,
+    reportBody: buildReport(form),
+    reportDirty: false,
+    reportStatus: 'generated',
+    reportId: form.reportId || createId('report'),
+  };
+  saveForm();
+  render();
 }
 
 function updateStatus() {
@@ -221,7 +381,8 @@ function escapeHtml(value) {
 }
 
 
-form = loadForm();
+form = mergeUrlContext(loadForm());
 if (!form.reportBody) form.reportBody = buildReport(form);
+saveForm();
 
 render();
