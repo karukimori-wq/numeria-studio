@@ -15,6 +15,7 @@ const initialForm = {
   sessionStatus: '',
   reportId: '',
   reportStatus: '',
+  completedAt: '',
 };
 
 const themes = ['恋愛・パートナーシップ', '復縁・片思い', '仕事・キャリア', '人間関係', '金運・豊かさ', '総合運'];
@@ -187,6 +188,7 @@ function buildGrowthReturnUrl() {
       status: 'success',
       sessionStatus: form.sessionStatus || '',
       reportStatus: form.reportStatus || '',
+      completedAt: form.completedAt || '',
     };
     Object.entries(refs).forEach(([key, value]) => {
       if (value) url.searchParams.set(key, value);
@@ -201,6 +203,7 @@ function renderGrowthStartPanel() {
   const context = form.growthContext;
   const returnUrl = buildGrowthReturnUrl();
   const sessionUrl = buildSessionUrl();
+  const sessionEventName = form.sessionStatus === 'completed' ? 'studio.session.completed.v1' : 'studio.session.started.v1';
   const ignored = context?.ignoredFields?.length
     ? `<p class="warning">受け取り対象外の項目を無視しました: ${context.ignoredFields.map(escapeHtml).join(', ')}</p>`
     : '';
@@ -211,7 +214,8 @@ function renderGrowthStartPanel() {
         <div><span>reportId</span><code>${escapeHtml(form.reportId)}</code></div>
         <div><span>reportStatus</span><code>${escapeHtml(form.reportStatus || 'draft')}</code></div>
         <div><span>reportRef</span><code>${escapeHtml(form.reportId ? `report:${form.reportId}` : '')}</code></div>
-        <div><span>eventName</span><code>studio.session.started.v1</code></div>
+        <div><span>eventName</span><code>${sessionEventName}</code></div>
+        ${form.completedAt ? `<div><span>completedAt</span><code>${escapeHtml(form.completedAt)}</code></div>` : ''}
       </div>`
     : '';
   return `
@@ -227,6 +231,8 @@ function renderGrowthStartPanel() {
         <button data-action="start-session" type="button">${form.sessionId ? 'Sessionを再確認' : 'Sessionを開始'}</button>
         ${form.sessionId ? `<a class="button-link" href="${escapeHtml(sessionUrl)}">鑑定作成へ進む</a>` : ''}
         ${form.sessionId ? '<a class="button-link secondary" href="#report-editor" data-action="generate-report-link">Report作成へ進む</a>' : ''}
+        ${form.sessionId ? '<button data-action="complete-session" type="button">鑑定完了にする</button>' : ''}
+        ${form.sessionId ? '<button data-action="export-refs" type="button">参照ID JSON</button>' : ''}
         ${returnUrl ? `<a class="button-link dark" href="${escapeHtml(returnUrl)}">Growth Engineのフォロー画面へ戻る</a>` : ''}
       </div>
       ${sessionSummary}
@@ -325,6 +331,8 @@ function bindEvents() {
     updateStatus();
   }));
   document.querySelector('[data-action="start-session"]').addEventListener('click', startSession);
+  document.querySelector('[data-action="complete-session"]')?.addEventListener('click', completeSession);
+  document.querySelector('[data-action="export-refs"]')?.addEventListener('click', exportReferenceJson);
   document.querySelector('[data-action="regenerate"]').addEventListener('click', () => {
     regenerateReport();
   });
@@ -354,6 +362,7 @@ function startSession() {
     sessionStatus: 'started',
     reportId: form.reportId || createId('report'),
     reportStatus: form.reportStatus || 'draft',
+    completedAt: '',
   };
   saveForm();
   render();
@@ -369,6 +378,65 @@ function regenerateReport() {
   };
   saveForm();
   render();
+}
+
+function completeSession() {
+  form = {
+    ...form,
+    sessionId: form.sessionId || createId('session'),
+    sessionStatus: 'completed',
+    reportId: form.reportId || createId('report'),
+    reportStatus: 'generated',
+    reportBody: form.reportBody || buildReport(form),
+    reportDirty: false,
+    completedAt: new Date().toISOString(),
+  };
+  saveForm();
+  render();
+}
+
+function buildReferenceExport() {
+  return {
+    appName: 'numeria-studio',
+    status: 'success',
+    sourceApp: 'numeria-studio',
+    targetApp: 'growth-engine',
+    workspaceId: form.growthContext?.workspaceId || '',
+    userId: form.growthContext?.userId || '',
+    reservationId: form.growthContext?.reservationId || '',
+    customerId: form.growthContext?.customerId || '',
+    sessionId: form.sessionId || '',
+    sessionStatus: form.sessionStatus || '',
+    reportId: form.reportId || '',
+    reportRef: form.reportId ? `report:${form.reportId}` : '',
+    reportStatus: form.reportStatus || '',
+    eventName: form.sessionStatus === 'completed' ? 'studio.session.completed.v1' : 'studio.session.started.v1',
+    completedAt: form.completedAt || '',
+    dataSafety: {
+      reportBodyIncluded: false,
+      pdfBodyIncluded: false,
+      clientNameIncluded: false,
+      birthdayIncluded: false,
+      paymentStatusIncluded: false,
+      salesAmountIncluded: false,
+      fullMeetingTranscriptIncluded: false,
+    },
+  };
+}
+
+function exportReferenceJson(event) {
+  const payload = JSON.stringify(buildReferenceExport(), null, 2);
+  const blob = new Blob([`${payload}\n`], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `${form.sessionId || 'session'}-refs.json`;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+  event.target.textContent = '参照IDを書き出し済み';
+  setTimeout(() => { event.target.textContent = '参照ID JSON'; }, 1600);
 }
 
 function updateStatus() {
