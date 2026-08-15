@@ -79,6 +79,21 @@ button {
 }
 button:hover { transform: translateY(-1px); }
 .ghost-button { background: rgba(45, 36, 56, 0.82); white-space: nowrap; }
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 999px;
+  padding: 11px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #8a55e8, #c066a8);
+  box-shadow: 0 10px 24px rgba(124, 72, 201, 0.22);
+  text-decoration: none;
+  font-weight: 800;
+}
+.button-link.secondary { background: #6d5b82; }
+.button-link.dark { background: #2d2438; }
 .report-editor {
   min-height: 720px;
   white-space: pre-wrap;
@@ -88,6 +103,83 @@ button:hover { transform: translateY(-1px); }
   background: #fffdf9;
   border: 1px solid #eadfcc;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+}
+
+.start-panel {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.eyebrow.small {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+}
+
+.muted,
+.warning {
+  margin: 0;
+  color: #6f6378;
+  line-height: 1.7;
+}
+
+.warning,
+.excluded-fields {
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fff4d7;
+  color: #6e5414;
+  font-weight: 700;
+}
+
+.excluded-fields {
+  background: #f7f1ea;
+  color: #4c4058;
+}
+
+.ref-list,
+.result-box {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.ref-list div,
+.result-box div {
+  min-width: 0;
+  border-radius: 16px;
+  padding: 14px;
+  background: #fffdf9;
+  border: 1px solid rgba(87, 68, 114, 0.1);
+}
+
+.ref-list dt,
+.result-box span {
+  display: block;
+  margin-bottom: 8px;
+  color: #7b4ed1;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.ref-list dd {
+  margin: 0;
+}
+
+code {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: #2d2438;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.88rem;
+}
+
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .contract-note,
@@ -167,16 +259,20 @@ button:hover { transform: translateY(-1px); }
 @media (max-width: 900px) {
   .hero, .report-header { flex-direction: column; align-items: stretch; }
   .workspace { grid-template-columns: 1fr; }
-  .contract-grid { grid-template-columns: 1fr 1fr; }
+  .contract-grid,
+  .ref-list,
+  .result-box { grid-template-columns: 1fr 1fr; }
   .actions { justify-content: flex-start; }
 }
 
 @media (max-width: 560px) {
-  .contract-grid { grid-template-columns: 1fr; }
+  .contract-grid,
+  .ref-list,
+  .result-box { grid-template-columns: 1fr; }
 }
 
 @media print {
-  .hero, .input-panel, .actions, .status-text, .contract-panel { display: none; }
+  .hero, .start-panel, .input-panel, .actions, .status-text, .contract-panel { display: none; }
   .app-shell, .panel { padding: 0; background: #fff; box-shadow: none; border: 0; }
   .workspace { display: block; }
   .report-header { margin: 0; }
