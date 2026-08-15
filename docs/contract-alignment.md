@@ -106,7 +106,9 @@ Growth Engine can open Numeria at `/app/growth/start` with reference IDs only:
 
 Numeria ignores prohibited inbound fields such as `paymentStatus`, `salesAmount`, `fullMeetingTranscript`, `fullReportBody`, `apiKey` and `secretPrompt`.
 
-After Session start, Numeria generates `sessionId` and `reportId`, then shows CTAs for appraisal creation, Report creation, and returning to Growth Engine. The Growth return URL includes reference IDs and statuses only. Report body, PDF body, customer master data, payment state, sales amounts and full transcripts are not returned.
+After Session start, Numeria generates `sessionId` and `reportId`, then shows CTAs for appraisal creation, Report creation, and returning to Growth Engine. The screen can also mark the session as completed and surface `studio.session.completed.v1`.
+
+The Growth return URL includes reference IDs and statuses only. The reference JSON export also contains IDs and status fields only. Report body, PDF body, local draft names, birthdays, customer master data, payment state, sales amounts and full transcripts are not returned or exported.
 
 ## Data Safety
 
