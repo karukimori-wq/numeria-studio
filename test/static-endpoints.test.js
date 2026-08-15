@@ -41,6 +41,8 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.paymentStatusAccepted, false);
   assert.equal(contractsStatus.screenFlow.salesAmountAccepted, false);
   assert.equal(contractsStatus.screenFlow.supportsGrowthEngineScreenStart, true);
+  assert.equal(contractsStatus.screenFlow.supportsSessionCompletion, true);
+  assert.equal(contractsStatus.screenFlow.supportsReferenceOnlyExport, true);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
@@ -53,8 +55,14 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   }
   assert.match(appSource, /function startSession/);
   assert.match(appSource, /sessionStatus:\s*'started'/);
+  assert.match(appSource, /sessionStatus:\s*'completed'/);
   assert.match(appSource, /reportRef/);
+  assert.match(appSource, /function buildReferenceExport/);
+  assert.match(appSource, /studio\.session\.completed\.v1/);
   assert.match(appSource, /Growth Engineのフォロー画面へ戻る/);
+  assert.match(appSource, /reportBodyIncluded:\s*false/);
+  assert.match(appSource, /clientNameIncluded:\s*false/);
+  assert.match(appSource, /birthdayIncluded:\s*false/);
   assert.doesNotMatch(appSource, /paymentStatus:\s*payload/);
   assert.doesNotMatch(appSource, /salesAmount:\s*payload/);
 });
