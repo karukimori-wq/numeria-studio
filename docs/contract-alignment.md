@@ -91,6 +91,23 @@ The static build publishes these unauthenticated monitoring endpoints:
 - `/contracts/status`
 - `/contracts/status.json`
 
+## Growth Engine Screen Start
+
+Growth Engine can open Numeria at `/app/growth/start` with reference IDs only:
+
+- `workspaceId`
+- `userId`
+- `reservationId`
+- `customerId`
+- `intent`
+- `traceId`
+- `correlationId`
+- `returnUrl`
+
+Numeria ignores prohibited inbound fields such as `paymentStatus`, `salesAmount`, `fullMeetingTranscript`, `fullReportBody`, `apiKey` and `secretPrompt`.
+
+After Session start, Numeria generates `sessionId` and `reportId`, then shows CTAs for appraisal creation, Report creation, and returning to Growth Engine. The Growth return URL includes reference IDs and statuses only. Report body, PDF body, customer master data, payment state, sales amounts and full transcripts are not returned.
+
 ## Data Safety
 
 Numeria must not receive, store as canonical data, log, or send to other apps:
