@@ -44,6 +44,41 @@
     "traceId",
     "correlationId"
   ],
+  "screenFlow": {
+    "growthEngineStartEntryPoint": "/app/growth/start",
+    "acceptsGrowthEngineContext": true,
+    "integrationMode": "reference_ids_only",
+    "acceptedRefs": [
+      "workspaceId",
+      "userId",
+      "reservationId",
+      "customerId",
+      "intent",
+      "traceId",
+      "correlationId"
+    ],
+    "returnedRefs": [
+      "sessionId",
+      "reportId",
+      "reportRef"
+    ],
+    "reportBodyReturnedToGrowthEngine": false,
+    "fullMeetingTranscriptReturned": false,
+    "paymentStatusAccepted": false,
+    "salesAmountAccepted": false,
+    "supportsGrowthEngineScreenStart": true,
+    "returnAfterCompletionUsesRefsOnly": true
+  },
+  "staticEndpoints": {
+    "health": "/health",
+    "version": "/version",
+    "contractsStatus": [
+      "/contracts/status",
+      "/contracts/status.json"
+    ],
+    "growthStartScreen": "/app/growth/start",
+    "sessionScreenPattern": "/app/sessions/{sessionId}"
+  },
   "doesNotOwn": [
     "Customer",
     "Reservation",
