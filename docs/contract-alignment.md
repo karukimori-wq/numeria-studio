@@ -82,6 +82,15 @@ Numeria must return reference IDs only:
 - `traceId`
 - `correlationId`
 
+## Static Monitoring Endpoints
+
+The static build publishes these unauthenticated monitoring endpoints:
+
+- `/health`
+- `/version`
+- `/contracts/status`
+- `/contracts/status.json`
+
 ## Data Safety
 
 Numeria must not receive, store as canonical data, log, or send to other apps:
