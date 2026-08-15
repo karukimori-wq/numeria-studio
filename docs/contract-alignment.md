@@ -17,7 +17,46 @@ Numeria Studio does not own:
 - Payment or Sales ledger
 - SNS PostDraft or MessageDraft
 - Velvet Visit, professional Memory, ServiceNote, Timeline or NextAction
+- Communication Planner Conversation, Message, ConversationContext, ReplyDraft or SafetyCheck
 - AI Activity, AI Usage or AI Capability ledger
+
+## Communication Planner Impact
+
+Communication Planner is the 1-to-1 communication management app.
+
+Communication Planner owns:
+
+- Conversation
+- Message
+- ConversationContext
+- ReplyDraft
+- SafetyCheck
+- communication send workflow
+
+No direct Numeria -> Communication Planner body sharing is required for MVP.
+
+If a future workflow links a Numeria report/session to a communication workflow, Numeria may pass reference IDs only:
+
+- `workspaceId`
+- `userId`
+- `customerId`
+- `sessionId`
+- `reportId`
+- `conversationId` where known
+- `replyDraftId` where known
+- `traceId`
+- `correlationId`
+
+Numeria must not pass:
+
+- full Report bodies
+- full appraisal text
+- full meeting notes
+- full conversation histories
+- message bodies
+- ConversationContext bodies
+- ReplyDraft bodies
+- SafetyCheck records as canonical data
 
 ## Velvet Impact
 
@@ -55,6 +94,9 @@ Numeria must not receive, store as canonical data, log, or send to other apps:
 - Sales records
 - full Report bodies outside Numeria
 - `fullMeetingTranscript`
+- Communication Planner full message bodies
+- Communication Planner full ConversationContext bodies
+- Communication Planner full ReplyDraft bodies
 - Velvet full professional memory bodies
 - Velvet full professional note bodies
 - full conversation histories
@@ -73,3 +115,5 @@ Numeria events remain:
 - `studio.report.generated.v1`
 
 Velvet events are owned by Velvet and should not be emitted by Numeria.
+
+Communication Planner events are owned by Communication Planner and should not be emitted by Numeria.
