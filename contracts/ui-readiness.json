@@ -29,7 +29,8 @@
     "/contracts/status",
     "/contracts/production-flow-result",
     "/contracts/data-boundaries",
-    "/contracts/operational-manifest"
+    "/contracts/operational-manifest",
+    "/contracts/ui-readiness"
   ],
   "dataSafety": {
     "referenceIdsOnly": true,
