@@ -1,0 +1,113 @@
+{
+  "appName": "numeria-studio",
+  "mapVersion": "integration-map-0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "integrationMode": "reference_ids_only",
+  "apps": {
+    "growth-engine": {
+      "role": "Customer, Reservation, Payment, Sales source of truth",
+      "inboundToNumeria": {
+        "entryPoint": "/app/growth/start",
+        "acceptedRefs": [
+          "workspaceId",
+          "userId",
+          "reservationId",
+          "customerId",
+          "intent",
+          "traceId",
+          "correlationId",
+          "returnUrl"
+        ],
+        "prohibitedFields": [
+          "name",
+          "email",
+          "paymentStatus",
+          "salesAmount",
+          "fullMeetingTranscript"
+        ]
+      },
+      "returnedFromNumeria": {
+        "returnedRefs": [
+          "sessionId",
+          "reportId",
+          "reportRef",
+          "traceId",
+          "correlationId"
+        ],
+        "reportBodyReturned": false,
+        "pdfBodyReturned": false
+      }
+    },
+    "ai-platform-core": {
+      "role": "AI Activity and AI Usage source of truth",
+      "activityPayloadPolicy": {
+        "allowedRefs": [
+          "workspaceId",
+          "userId",
+          "sessionId",
+          "reportId",
+          "reportType",
+          "traceId",
+          "correlationId"
+        ],
+        "secretPromptSent": false,
+        "fullTranscriptSent": false,
+        "reportBodySent": false
+      }
+    },
+    "communication-planner": {
+      "role": "Conversation, Message, ReplyDraft, SafetyCheck source of truth",
+      "payloadPolicy": {
+        "allowedRefs": [
+          "workspaceId",
+          "userId",
+          "customerId",
+          "sessionId",
+          "reportId",
+          "reportRef"
+        ],
+        "reportBodySent": false,
+        "conversationOwnedByNumeria": false,
+        "replyDraftOwnedByNumeria": false
+      }
+    },
+    "sns-planner": {
+      "role": "PostDraft and MessageDraft source of truth",
+      "payloadPolicy": {
+        "allowedRefs": [
+          "workspaceId",
+          "userId",
+          "customerId",
+          "sessionId",
+          "reportId",
+          "reportRef"
+        ],
+        "reportBodySent": false,
+        "messageDraftOwnedByNumeria": false
+      }
+    },
+    "platform-admin": {
+      "role": "Operational monitoring only",
+      "readEndpoints": [
+        "/health",
+        "/version",
+        "/contracts/status",
+        "/contracts/production-flow-result",
+        "/contracts/data-boundaries",
+        "/contracts/operational-manifest",
+        "/contracts/ui-readiness",
+        "/contracts/release-checklist",
+        "/contracts/integration-map",
+        "/contracts/qa-handoff"
+      ],
+      "storesBusinessData": false
+    }
+  },
+  "events": [
+    "studio.session.started.v1",
+    "studio.session.completed.v1",
+    "studio.report.generated.v1"
+  ],
+  "issues": []
+}
