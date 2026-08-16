@@ -87,6 +87,10 @@
       "/contracts/status",
       "/contracts/status.json"
     ],
+    "productionFlowResult": [
+      "/contracts/production-flow-result",
+      "/contracts/production-flow-result.json"
+    ],
     "growthStartScreen": "/app/growth/start",
     "sessionScreenPattern": "/app/sessions/{sessionId}"
   },
