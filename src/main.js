@@ -476,8 +476,8 @@ function bindEvents() {
   });
   document.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
   document.querySelector('[data-action="copy"]').addEventListener('click', async (event) => {
-    await navigator.clipboard.writeText(form.reportBody);
-    event.target.textContent = 'コピー済み';
+    const copied = await copyText(form.reportBody);
+    event.target.textContent = copied ? 'コピー済み' : 'コピー未対応';
     setTimeout(() => { event.target.textContent = 'コピー'; }, 1600);
   });
 }
@@ -571,9 +571,31 @@ function exportReferenceJson(event) {
 
 async function copyReferenceJson(event) {
   const payload = JSON.stringify(buildReferenceExport(), null, 2);
-  await navigator.clipboard.writeText(payload);
-  event.target.textContent = '参照IDをコピー済み';
+  const copied = await copyText(payload);
+  event.target.textContent = copied ? '参照IDをコピー済み' : 'コピー未対応';
   setTimeout(() => { event.target.textContent = '参照IDをコピー'; }, 1600);
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.append(textarea);
+  textarea.select();
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch {
+    copied = false;
+  }
+  textarea.remove();
+  return copied;
 }
 
 function updateStatus() {
