@@ -71,6 +71,7 @@
     "supportsSessionCompletion": true,
     "supportsReferenceOnlyExport": true,
     "supportsLocalAppraisalSessionHistory": true,
+    "supportsSessionUrlRestore": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
