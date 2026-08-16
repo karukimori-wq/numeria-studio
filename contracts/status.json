@@ -73,6 +73,7 @@
     "supportsLocalAppraisalSessionHistory": true,
     "supportsSessionUrlRestore": true,
     "supportsSessionRestoreNotice": true,
+    "supportsReferencePayloadPreview": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
