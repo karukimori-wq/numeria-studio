@@ -253,6 +253,66 @@ code {
   line-height: 1.6;
 }
 
+.safety-checklist {
+  display: grid;
+  gap: 14px;
+  border-radius: 16px;
+  padding: 16px;
+  background: #eef7f1;
+  border: 1px solid rgba(55, 126, 82, 0.18);
+}
+
+.safety-checklist h3,
+.safety-checklist p {
+  margin: 0;
+}
+
+.safety-checklist ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.safety-checklist li {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid rgba(55, 126, 82, 0.14);
+}
+
+.safety-checklist li > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 24px;
+  border-radius: 999px;
+  color: #fff;
+  background: #2f7d4f;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.safety-checklist strong {
+  display: block;
+  color: #254d35;
+  font-size: 0.9rem;
+}
+
+.safety-checklist li p {
+  margin-top: 4px;
+  color: #4d6858;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
 .history-panel {
   display: grid;
   gap: 16px;
@@ -372,6 +432,7 @@ code {
   .contract-grid,
   .ref-list,
   .result-box,
+  .safety-checklist ul,
   .session-restore-notice dl,
   .history-item dl { grid-template-columns: 1fr 1fr; }
   .session-restore-notice,
@@ -383,6 +444,7 @@ code {
   .contract-grid,
   .ref-list,
   .result-box,
+  .safety-checklist ul,
   .session-restore-notice dl,
   .history-item dl { grid-template-columns: 1fr; }
 }
