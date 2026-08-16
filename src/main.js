@@ -31,6 +31,7 @@ const templateTypes = [
 const storeKey = 'numeria-report-form';
 const historyStoreKey = 'numeria-appraisal-session-history';
 const allowedGrowthRefs = ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent', 'traceId', 'correlationId', 'returnUrl'];
+const allowedSessionRefs = ['sessionId', 'reportId', 'sessionStatus', 'reportStatus', 'completedAt'];
 const blockedGrowthFields = ['name', 'clientName', 'email', 'paymentStatus', 'salesAmount', 'fullMeetingTranscript', 'fullReportBody', 'apiKey', 'secretPrompt'];
 const contractStatus = {
   identityMode: 'workspaceId + userId',
@@ -124,10 +125,26 @@ function readGrowthContextFromUrl() {
   };
 }
 
+function readSessionContextFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const refs = {};
+  allowedSessionRefs.forEach((key) => {
+    const value = params.get(key);
+    if (value) refs[key] = value;
+  });
+  const pathSessionId = window.location.pathname.match(/\/app\/sessions\/([^/]+)/)?.[1];
+  if (pathSessionId && pathSessionId !== 'sample') refs.sessionId = decodeURIComponent(pathSessionId);
+  if (!Object.keys(refs).length) return null;
+  return refs;
+}
+
 function mergeUrlContext(currentForm) {
   const urlContext = readGrowthContextFromUrl();
-  if (!urlContext) return currentForm;
-  return { ...currentForm, growthContext: { ...(currentForm.growthContext || {}), ...urlContext } };
+  const sessionContext = readSessionContextFromUrl();
+  const nextForm = urlContext
+    ? { ...currentForm, growthContext: { ...(currentForm.growthContext || {}), ...urlContext } }
+    : currentForm;
+  return sessionContext ? { ...nextForm, ...sessionContext } : nextForm;
 }
 
 function calcLifePath(birthday) {
@@ -288,7 +305,7 @@ function renderGrowthStartPanel() {
 
 function buildHistorySessionUrl(item) {
   const url = new URL(`/app/sessions/${item.sessionId}/`, window.location.origin);
-  ['workspaceId', 'userId', 'reservationId', 'customerId', 'sessionId', 'reportId'].forEach((key) => {
+  ['workspaceId', 'userId', 'reservationId', 'customerId', 'sessionId', 'reportId', 'sessionStatus', 'reportStatus', 'completedAt'].forEach((key) => {
     if (item[key]) url.searchParams.set(key, item[key]);
   });
   url.searchParams.set('sourceApp', 'numeria-studio');
