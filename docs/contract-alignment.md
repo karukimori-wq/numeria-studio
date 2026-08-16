@@ -112,6 +112,8 @@ The Growth return URL includes reference IDs and statuses only. The reference JS
 
 The screen previews the exact Growth Engine reference payload before export or copy so users can verify that only reference IDs, status fields, event name, and data-safety flags are included.
 
+Copy actions use the browser Clipboard API when available and fall back to a temporary textarea copy path when it is not. Both paths copy the same reference-only payload and do not include Report body, PDF body, personal data, payment data, sales data or full transcripts.
+
 ## Appraisal Session History
 
 The UI keeps a small local `AppraisalSessionHistory` for recent work continuity.
