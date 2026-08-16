@@ -1,0 +1,85 @@
+{
+  "appName": "numeria-studio",
+  "contractVersion": "0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "owns": [
+    "Session",
+    "Report",
+    "AppraisalLogic",
+    "AppraisalProfile",
+    "SessionClientSnapshot",
+    "ReportRecipientSnapshot"
+  ],
+  "doesNotOwn": [
+    "Customer",
+    "Reservation",
+    "Payment",
+    "Sales",
+    "Conversation",
+    "Message",
+    "ReplyDraft",
+    "SafetyCheck",
+    "MessageDraft",
+    "AIActivity"
+  ],
+  "integrationMode": "reference_ids_only",
+  "acceptedRefs": [
+    "workspaceId",
+    "userId",
+    "reservationId",
+    "customerId",
+    "sessionId",
+    "reportId",
+    "traceId",
+    "correlationId"
+  ],
+  "returnedRefs": [
+    "sessionId",
+    "reportId",
+    "reportRef",
+    "sessionStatus",
+    "reportStatus",
+    "completedAt"
+  ],
+  "prohibitedInboundFields": [
+    "paymentStatus",
+    "salesAmount",
+    "stripeData",
+    "customerMaster",
+    "fullMeetingTranscript",
+    "apiKey",
+    "accessToken",
+    "secretPrompt"
+  ],
+  "prohibitedOutboundFields": [
+    "reportBody",
+    "pdfBody",
+    "fullReportBody",
+    "fullAppraisalText",
+    "fullMeetingTranscript",
+    "paymentStatus",
+    "salesAmount",
+    "apiKey",
+    "accessToken",
+    "secretPrompt"
+  ],
+  "externalAppBoundaries": {
+    "growth-engine": {
+      "receivesRefsOnly": true,
+      "reportBodyReturned": false,
+      "paymentOrSalesReturned": false
+    },
+    "communication-planner": {
+      "receivesRefsOnly": true,
+      "reportBodySent": false,
+      "conversationOwnedByNumeria": false
+    },
+    "ai-platform-core": {
+      "receivesRefsOnly": true,
+      "secretPromptSent": false,
+      "fullTranscriptSent": false
+    }
+  },
+  "issues": []
+}
