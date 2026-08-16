@@ -29,6 +29,7 @@ const templateTypes = [
   { value: 'short', label: '初回相談ショート版' },
 ];
 const storeKey = 'numeria-report-form';
+const historyStoreKey = 'numeria-appraisal-session-history';
 const allowedGrowthRefs = ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent', 'traceId', 'correlationId', 'returnUrl'];
 const blockedGrowthFields = ['name', 'clientName', 'email', 'paymentStatus', 'salesAmount', 'fullMeetingTranscript', 'fullReportBody', 'apiKey', 'secretPrompt'];
 const contractStatus = {
@@ -43,6 +44,19 @@ const contractStatus = {
 let form;
 
 
+function loadAppraisalSessionHistory() {
+  try {
+    const history = JSON.parse(localStorage.getItem(historyStoreKey) || '[]');
+    return Array.isArray(history) ? history : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAppraisalSessionHistory(history) {
+  localStorage.setItem(historyStoreKey, JSON.stringify(history.slice(0, 8)));
+}
+
 function loadForm() {
   try {
     return { ...initialForm, ...JSON.parse(localStorage.getItem(storeKey) || '{}') };
@@ -53,6 +67,38 @@ function loadForm() {
 
 function saveForm() {
   localStorage.setItem(storeKey, JSON.stringify(form));
+}
+
+function buildAppraisalSessionSnapshot() {
+  if (!form.sessionId) return null;
+  const now = new Date().toISOString();
+  return {
+    sessionId: form.sessionId,
+    sessionStatus: form.sessionStatus || 'started',
+    reportId: form.reportId || '',
+    reportRef: form.reportId ? `report:${form.reportId}` : '',
+    reportStatus: form.reportStatus || 'draft',
+    eventName: form.sessionStatus === 'completed' ? 'studio.session.completed.v1' : 'studio.session.started.v1',
+    workspaceId: form.growthContext?.workspaceId || '',
+    userId: form.growthContext?.userId || '',
+    reservationId: form.growthContext?.reservationId || '',
+    customerId: form.growthContext?.customerId || '',
+    theme: form.theme,
+    method: form.method,
+    updatedAt: now,
+    completedAt: form.completedAt || '',
+    dataScope: 'Numeria-owned appraisal session snapshot. No customer master, payment, sales, transcript, or report body.',
+  };
+}
+
+function upsertAppraisalSessionHistory() {
+  const snapshot = buildAppraisalSessionSnapshot();
+  if (!snapshot) return;
+  const nextHistory = [
+    snapshot,
+    ...loadAppraisalSessionHistory().filter((item) => item.sessionId !== snapshot.sessionId),
+  ];
+  saveAppraisalSessionHistory(nextHistory);
 }
 
 function createId(prefix) {
@@ -240,6 +286,42 @@ function renderGrowthStartPanel() {
     </section>`;
 }
 
+function buildHistorySessionUrl(item) {
+  const url = new URL(`/app/sessions/${item.sessionId}/`, window.location.origin);
+  ['workspaceId', 'userId', 'reservationId', 'customerId', 'sessionId', 'reportId'].forEach((key) => {
+    if (item[key]) url.searchParams.set(key, item[key]);
+  });
+  url.searchParams.set('sourceApp', 'numeria-studio');
+  return url.pathname + url.search;
+}
+
+function renderAppraisalSessionHistory() {
+  const history = loadAppraisalSessionHistory();
+  const rows = history.map((item) => `
+    <article class="history-item">
+      <div>
+        <strong>${escapeHtml(item.theme || '鑑定Session')}</strong>
+        <p>${escapeHtml(item.method || 'method未設定')} / ${escapeHtml(item.updatedAt || '')}</p>
+      </div>
+      <dl>
+        <div><dt>sessionId</dt><dd><code>${escapeHtml(item.sessionId)}</code></dd></div>
+        <div><dt>reportId</dt><dd><code>${escapeHtml(item.reportId || '')}</code></dd></div>
+        <div><dt>sessionStatus</dt><dd><code>${escapeHtml(item.sessionStatus || '')}</code></dd></div>
+        <div><dt>reportStatus</dt><dd><code>${escapeHtml(item.reportStatus || '')}</code></dd></div>
+      </dl>
+      <a class="button-link secondary" href="${escapeHtml(buildHistorySessionUrl(item))}">開く</a>
+    </article>`).join('');
+  return `
+    <section class="panel history-panel" aria-label="最近の鑑定Session">
+      <div>
+        <p class="eyebrow small">Appraisal Session History</p>
+        <h2>最近のSession</h2>
+        <p class="muted">保存するのは鑑定Sessionのsnapshotです。Customer master、支払い、売上、Report本文、全文カルテは保存しません。</p>
+      </div>
+      ${rows || '<p class="muted">まだ保存されたSessionはありません。Session開始後にここへ表示されます。</p>'}
+    </section>`;
+}
+
 function render() {
   const isSessionRoute = window.location.pathname.startsWith('/app/sessions/');
   document.querySelector('#root').innerHTML = `
@@ -253,6 +335,7 @@ function render() {
         <button class="ghost-button" data-action="reset">リセット</button>
       </section>
       ${renderGrowthStartPanel()}
+      ${renderAppraisalSessionHistory()}
       <div class="workspace">
         <form class="panel input-panel">
           <h2>鑑定情報</h2>
@@ -365,6 +448,7 @@ function startSession() {
     completedAt: '',
   };
   saveForm();
+  upsertAppraisalSessionHistory();
   render();
 }
 
@@ -377,6 +461,7 @@ function regenerateReport() {
     reportId: form.reportId || createId('report'),
   };
   saveForm();
+  upsertAppraisalSessionHistory();
   render();
 }
 
@@ -392,6 +477,7 @@ function completeSession() {
     completedAt: new Date().toISOString(),
   };
   saveForm();
+  upsertAppraisalSessionHistory();
   render();
 }
 
