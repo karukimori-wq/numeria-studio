@@ -284,6 +284,12 @@ function renderGrowthStartPanel() {
   const returnUrl = buildGrowthReturnUrl();
   const sessionUrl = buildSessionUrl();
   const sessionEventName = form.sessionStatus === 'completed' ? 'studio.session.completed.v1' : 'studio.session.started.v1';
+  const referencePreview = form.sessionId
+    ? `<details class="reference-preview">
+        <summary>Growth Engineへ返す参照ID payloadを確認</summary>
+        <pre>${escapeHtml(JSON.stringify(buildReferenceExport(), null, 2))}</pre>
+      </details>`
+    : '';
   const ignored = context?.ignoredFields?.length
     ? `<p class="warning">受け取り対象外の項目を無視しました: ${context.ignoredFields.map(escapeHtml).join(', ')}</p>`
     : '';
@@ -316,6 +322,7 @@ function renderGrowthStartPanel() {
         ${returnUrl ? `<a class="button-link dark" href="${escapeHtml(returnUrl)}">Growth Engineのフォロー画面へ戻る</a>` : ''}
       </div>
       ${sessionSummary}
+      ${referencePreview}
       ${form.sessionId ? '<p class="excluded-fields">Growth Engineへ返さない項目: reportBody / pdfBody / clientName / paymentStatus / salesAmount / fullMeetingTranscript</p>' : ''}
     </section>`;
 }
