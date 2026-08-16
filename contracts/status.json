@@ -69,7 +69,10 @@
     "supportsGrowthEngineScreenStart": true,
     "returnAfterCompletionUsesRefsOnly": true,
     "supportsSessionCompletion": true,
-    "supportsReferenceOnlyExport": true
+    "supportsReferenceOnlyExport": true,
+    "supportsLocalAppraisalSessionHistory": true,
+    "localHistoryStoresReportBody": false,
+    "localHistoryStoresCustomerMaster": false
   },
   "staticEndpoints": {
     "health": "/health",
