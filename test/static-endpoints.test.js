@@ -12,6 +12,8 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/version',
     'dist/contracts/status',
     'dist/contracts/status.json',
+    'dist/contracts/production-flow-result',
+    'dist/contracts/production-flow-result.json',
     'dist/src/reference-safety.js',
     'dist/app/growth/start/index.html',
     'dist/app/sessions/sample/index.html',
@@ -51,8 +53,23 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadCopy, true);
   assert.equal(contractsStatus.screenFlow.supportsClipboardFallback, true);
   assert.equal(contractsStatus.screenFlow.supportsReferenceSafetyChecklist, true);
+  assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
+    '/contracts/production-flow-result',
+    '/contracts/production-flow-result.json',
+  ]);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
+
+  const productionFlow = JSON.parse(readFileSync('dist/contracts/production-flow-result', 'utf8'));
+  assert.equal(productionFlow.appName, 'numeria-studio');
+  assert.equal(productionFlow.flowName, 'growth-to-numeria-screen-start');
+  assert.equal(productionFlow.status, 'ready');
+  assert.equal(productionFlow.entryPoint, '/app/growth/start');
+  assert.equal(productionFlow.dataSafety.paymentStatusAccepted, false);
+  assert.equal(productionFlow.dataSafety.salesAmountAccepted, false);
+  assert.equal(productionFlow.dataSafety.reportBodyReturnedToGrowthEngine, false);
+  assert.equal(productionFlow.dataSafety.customerMasterReturned, false);
+  assert.equal(productionFlow.dataSafety.fullMeetingTranscriptReturned, false);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
