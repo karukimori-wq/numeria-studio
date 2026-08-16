@@ -110,7 +110,7 @@ After Session start, Numeria generates `sessionId` and `reportId`, then shows CT
 
 The Growth return URL includes reference IDs and statuses only. The reference JSON export also contains IDs and status fields only. Report body, PDF body, local draft names, birthdays, customer master data, payment state, sales amounts and full transcripts are not returned or exported.
 
-The screen previews the exact Growth Engine reference payload before export so users can verify that only reference IDs, status fields, event name, and data-safety flags are included.
+The screen previews the exact Growth Engine reference payload before export or copy so users can verify that only reference IDs, status fields, event name, and data-safety flags are included.
 
 ## Appraisal Session History
 
