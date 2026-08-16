@@ -1,0 +1,82 @@
+{
+  "appName": "numeria-studio",
+  "appVersion": "0.1.0",
+  "contractVersion": "0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "baseUrl": "https://numeria-studio.illusionddt.chatgpt.site",
+  "healthEndpoints": {
+    "health": "/health",
+    "version": "/version",
+    "contractsStatus": "/contracts/status"
+  },
+  "contractEndpoints": {
+    "contractsStatus": [
+      "/contracts/status",
+      "/contracts/status.json"
+    ],
+    "productionFlowResult": [
+      "/contracts/production-flow-result",
+      "/contracts/production-flow-result.json"
+    ],
+    "dataBoundaries": [
+      "/contracts/data-boundaries",
+      "/contracts/data-boundaries.json"
+    ],
+    "operationalManifest": [
+      "/contracts/operational-manifest",
+      "/contracts/operational-manifest.json"
+    ]
+  },
+  "screenEntryPoints": {
+    "growthStart": "/app/growth/start",
+    "sessionPattern": "/app/sessions/{sessionId}"
+  },
+  "sourceOfTruth": {
+    "session": "numeria-studio",
+    "report": "numeria-studio",
+    "appraisalLogic": "numeria-studio",
+    "customer": "growth-engine",
+    "reservation": "growth-engine",
+    "payment": "growth-engine",
+    "sales": "growth-engine",
+    "conversation": "communication-planner",
+    "message": "communication-planner",
+    "replyDraft": "communication-planner",
+    "messageDraft": "sns-planner",
+    "aiActivity": "ai-platform-core"
+  },
+  "crossAppPayloadPolicy": {
+    "mode": "reference_ids_only",
+    "allowedRefs": [
+      "workspaceId",
+      "userId",
+      "reservationId",
+      "customerId",
+      "sessionId",
+      "reportId",
+      "reportRef",
+      "traceId",
+      "correlationId"
+    ],
+    "prohibitedFields": [
+      "paymentStatus",
+      "salesAmount",
+      "customerMaster",
+      "reportBody",
+      "pdfBody",
+      "fullReportBody",
+      "fullAppraisalText",
+      "fullMeetingTranscript",
+      "apiKey",
+      "accessToken",
+      "secretPrompt"
+    ]
+  },
+  "stableEvents": [
+    "studio.session.started.v1",
+    "studio.session.completed.v1",
+    "studio.report.generated.v1"
+  ],
+  "issues": []
+}
