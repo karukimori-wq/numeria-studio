@@ -74,6 +74,7 @@
     "supportsSessionUrlRestore": true,
     "supportsSessionRestoreNotice": true,
     "supportsReferencePayloadPreview": true,
+    "supportsReferencePayloadCopy": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
