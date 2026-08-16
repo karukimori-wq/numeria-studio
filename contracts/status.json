@@ -79,6 +79,7 @@
     "supportsReferenceSafetyChecklist": true,
     "supportsDataBoundaryEndpoint": true,
     "supportsOperationalManifest": true,
+    "supportsOperationalLinksPanel": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
