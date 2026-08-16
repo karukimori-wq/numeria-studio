@@ -1,0 +1,67 @@
+{
+  "appName": "numeria-studio",
+  "checklistVersion": "numeria-release-checklist-0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "items": [
+    {
+      "id": "contract_status_success",
+      "answer": "yes",
+      "evidence": "/contracts/status returns top-level status success",
+      "issue": null
+    },
+    {
+      "id": "data_boundary_reference_ids_only",
+      "answer": "yes",
+      "evidence": "/contracts/data-boundaries declares reference_ids_only and prohibited cross-app fields",
+      "issue": null
+    },
+    {
+      "id": "ui_flow_ready",
+      "answer": "yes",
+      "evidence": "/contracts/ui-readiness declares Growth start, Session screen, primary CTAs, and refs visible",
+      "issue": null
+    },
+    {
+      "id": "growth_return_refs_only",
+      "answer": "yes",
+      "evidence": "Growth return policy allows sessionId/reportId/reportRef only",
+      "issue": null
+    },
+    {
+      "id": "customer_master_not_owned",
+      "answer": "yes",
+      "evidence": "Customer, Reservation, Payment, Sales are Growth Engine source of truth",
+      "issue": null
+    },
+    {
+      "id": "report_body_not_copied_to_growth",
+      "answer": "yes",
+      "evidence": "Report body/PDF/full appraisal text are prohibited outbound fields",
+      "issue": null
+    },
+    {
+      "id": "communication_planner_boundary_kept",
+      "answer": "yes",
+      "evidence": "Conversation, Message, ReplyDraft, SafetyCheck are not owned by Numeria Studio",
+      "issue": null
+    },
+    {
+      "id": "automated_static_tests_defined",
+      "answer": "yes",
+      "evidence": "test/static-endpoints.test.js covers build outputs and data-safety assertions",
+      "issue": null
+    }
+  ],
+  "summary": {
+    "yes": 8,
+    "no": 0,
+    "notApplicable": 0
+  },
+  "remainingManualChecks": [
+    "Confirm deployed /app/growth/start starts a session and shows primary CTAs",
+    "Confirm deployed /contracts/* endpoints return JSON from public URL",
+    "Confirm Growth Engine follow-up return URL receives reference IDs only"
+  ],
+  "issues": []
+}
