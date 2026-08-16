@@ -110,6 +110,26 @@ After Session start, Numeria generates `sessionId` and `reportId`, then shows CT
 
 The Growth return URL includes reference IDs and statuses only. The reference JSON export also contains IDs and status fields only. Report body, PDF body, local draft names, birthdays, customer master data, payment state, sales amounts and full transcripts are not returned or exported.
 
+## Appraisal Session History
+
+The UI keeps a small local `AppraisalSessionHistory` for recent work continuity.
+
+This history is a Numeria-owned appraisal/session snapshot and stores:
+
+- `sessionId`
+- `reportId`
+- `reportRef`
+- `sessionStatus`
+- `reportStatus`
+- `workspaceId`
+- `userId`
+- `reservationId`
+- `customerId`
+- theme and method labels
+- timestamps
+
+It does not store a Customer master, Report body, PDF body, local draft names, birthdays, payment status, sales amount, or full transcripts.
+
 ## Data Safety
 
 Numeria must not receive, store as canonical data, log, or send to other apps:
