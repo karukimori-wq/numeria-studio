@@ -216,6 +216,23 @@ function renderRefRows(context) {
   return `<dl class="ref-list">${rows || '<div><dt>refs</dt><dd>参照IDなし</dd></div>'}</dl>`;
 }
 
+function renderSessionRestoreNotice(isSessionRoute) {
+  if (!isSessionRoute || !form.sessionId) return '';
+  const restoredRefs = ['sessionId', 'reportId', 'sessionStatus', 'reportStatus', 'completedAt']
+    .filter((key) => form[key])
+    .map((key) => `<div><dt>${escapeHtml(key)}</dt><dd><code>${escapeHtml(form[key])}</code></dd></div>`)
+    .join('');
+  return `
+    <section class="session-restore-notice" aria-label="Session URL復元">
+      <div>
+        <p class="eyebrow small">Session Restored</p>
+        <h2>参照IDからSessionを開いています</h2>
+        <p>復元対象は sessionId / reportId / status / timestamp のみです。Report本文、PDF本文、個人名、支払い、売上、全文カルテはURLから復元しません。</p>
+      </div>
+      <dl>${restoredRefs}</dl>
+    </section>`;
+}
+
 function buildSessionUrl() {
   if (!form.sessionId) return '#report-editor';
   const url = new URL(`/app/sessions/${form.sessionId}/`, window.location.origin);
@@ -351,6 +368,7 @@ function render() {
         </div>
         <button class="ghost-button" data-action="reset">リセット</button>
       </section>
+      ${renderSessionRestoreNotice(isSessionRoute)}
       ${renderGrowthStartPanel()}
       ${renderAppraisalSessionHistory()}
       <div class="workspace">
