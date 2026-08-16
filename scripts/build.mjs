@@ -15,6 +15,7 @@ await cp('index.html', 'dist/app/growth/start/index.html');
 await cp('index.html', 'dist/app/sessions/sample/index.html');
 await cp('src/main.js', 'dist/src/main.js');
 await cp('src/reference-safety.js', 'dist/src/reference-safety.js');
+await cp('src/contract-links.js', 'dist/src/contract-links.js');
 await cp('src/styles.css', 'dist/src/styles.css');
 await cp('contracts/status.json', 'dist/contracts/status.json');
 await cp('contracts/status.json', 'dist/contracts/status');
