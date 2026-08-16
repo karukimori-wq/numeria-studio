@@ -318,6 +318,7 @@ function renderGrowthStartPanel() {
         ${form.sessionId ? `<a class="button-link" href="${escapeHtml(sessionUrl)}">鑑定作成へ進む</a>` : ''}
         ${form.sessionId ? '<a class="button-link secondary" href="#report-editor" data-action="generate-report-link">Report作成へ進む</a>' : ''}
         ${form.sessionId ? '<button data-action="complete-session" type="button">鑑定完了にする</button>' : ''}
+        ${form.sessionId ? '<button data-action="copy-refs" type="button">参照IDをコピー</button>' : ''}
         ${form.sessionId ? '<button data-action="export-refs" type="button">参照ID JSON</button>' : ''}
         ${returnUrl ? `<a class="button-link dark" href="${escapeHtml(returnUrl)}">Growth Engineのフォロー画面へ戻る</a>` : ''}
       </div>
@@ -457,6 +458,7 @@ function bindEvents() {
   }));
   document.querySelector('[data-action="start-session"]').addEventListener('click', startSession);
   document.querySelector('[data-action="complete-session"]')?.addEventListener('click', completeSession);
+  document.querySelector('[data-action="copy-refs"]')?.addEventListener('click', copyReferenceJson);
   document.querySelector('[data-action="export-refs"]')?.addEventListener('click', exportReferenceJson);
   document.querySelector('[data-action="regenerate"]').addEventListener('click', () => {
     regenerateReport();
@@ -565,6 +567,13 @@ function exportReferenceJson(event) {
   URL.revokeObjectURL(url);
   event.target.textContent = '参照IDを書き出し済み';
   setTimeout(() => { event.target.textContent = '参照ID JSON'; }, 1600);
+}
+
+async function copyReferenceJson(event) {
+  const payload = JSON.stringify(buildReferenceExport(), null, 2);
+  await navigator.clipboard.writeText(payload);
+  event.target.textContent = '参照IDをコピー済み';
+  setTimeout(() => { event.target.textContent = '参照IDをコピー'; }, 1600);
 }
 
 function updateStatus() {
