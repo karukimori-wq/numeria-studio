@@ -18,6 +18,8 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/contracts/data-boundaries.json',
     'dist/contracts/operational-manifest',
     'dist/contracts/operational-manifest.json',
+    'dist/contracts/ui-readiness',
+    'dist/contracts/ui-readiness.json',
     'dist/src/reference-safety.js',
     'dist/src/contract-links.js',
     'dist/app/growth/start/index.html',
@@ -61,6 +63,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsDataBoundaryEndpoint, true);
   assert.equal(contractsStatus.screenFlow.supportsOperationalManifest, true);
   assert.equal(contractsStatus.screenFlow.supportsOperationalLinksPanel, true);
+  assert.equal(contractsStatus.screenFlow.supportsUiReadinessEndpoint, true);
   assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
     '/contracts/production-flow-result',
     '/contracts/production-flow-result.json',
@@ -72,6 +75,10 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.deepEqual(contractsStatus.staticEndpoints.operationalManifest, [
     '/contracts/operational-manifest',
     '/contracts/operational-manifest.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.uiReadiness, [
+    '/contracts/ui-readiness',
+    '/contracts/ui-readiness.json',
   ]);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
@@ -138,6 +145,25 @@ test('static build publishes health, version, and contracts status endpoints', (
     'studio.session.completed.v1',
     'studio.report.generated.v1',
   ]);
+
+  const uiReadiness = JSON.parse(readFileSync('dist/contracts/ui-readiness', 'utf8'));
+  assert.equal(uiReadiness.appName, 'numeria-studio');
+  assert.equal(uiReadiness.status, 'success');
+  assert.equal(uiReadiness.screenFlow.growthStartEntryPoint, '/app/growth/start');
+  assert.equal(uiReadiness.screenFlow.sessionStartShowsPrimaryCtas, true);
+  assert.equal(uiReadiness.screenFlow.sessionStartCanContinueToReport, true);
+  assert.equal(uiReadiness.screenFlow.sessionStartCanReturnToGrowthFollowup, true);
+  assert.equal(uiReadiness.screenFlow.operationalLinksVisible, true);
+  assert.deepEqual(uiReadiness.requiredVisibleRefs, ['sessionId', 'reportId', 'reportRef']);
+  assert.equal(uiReadiness.ctaLabels.includes('鑑定作成へ進む'), true);
+  assert.equal(uiReadiness.ctaLabels.includes('Report作成へ進む'), true);
+  assert.equal(uiReadiness.ctaLabels.includes('Growth Engineのフォロー画面へ戻る'), true);
+  assert.equal(uiReadiness.dataSafety.referenceIdsOnly, true);
+  assert.equal(uiReadiness.dataSafety.paymentStatusAccepted, false);
+  assert.equal(uiReadiness.dataSafety.salesAmountAccepted, false);
+  assert.equal(uiReadiness.dataSafety.customerMasterOwned, false);
+  assert.equal(uiReadiness.dataSafety.reportBodyReturnedToGrowthEngine, false);
+  assert.equal(uiReadiness.dataSafety.fullMeetingTranscriptReturned, false);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
