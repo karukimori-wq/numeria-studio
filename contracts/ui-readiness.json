@@ -1,0 +1,46 @@
+{
+  "appName": "numeria-studio",
+  "checklistVersion": "ui-readiness-0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "screenFlow": {
+    "growthStartEntryPoint": "/app/growth/start",
+    "sessionScreenPattern": "/app/sessions/{sessionId}",
+    "sessionStartShowsResult": true,
+    "sessionStartShowsPrimaryCtas": true,
+    "sessionStartCanContinueToReport": true,
+    "sessionStartCanReturnToGrowthFollowup": true,
+    "sessionUrlRestoreSupported": true,
+    "operationalLinksVisible": true
+  },
+  "requiredVisibleRefs": [
+    "sessionId",
+    "reportId",
+    "reportRef"
+  ],
+  "ctaLabels": [
+    "鑑定作成へ進む",
+    "Report作成へ進む",
+    "Growth Engineのフォロー画面へ戻る"
+  ],
+  "operationalLinks": [
+    "/health",
+    "/version",
+    "/contracts/status",
+    "/contracts/production-flow-result",
+    "/contracts/data-boundaries",
+    "/contracts/operational-manifest"
+  ],
+  "dataSafety": {
+    "referenceIdsOnly": true,
+    "paymentStatusAccepted": false,
+    "salesAmountAccepted": false,
+    "customerMasterOwned": false,
+    "reportBodyReturnedToGrowthEngine": false,
+    "pdfBodyReturnedToGrowthEngine": false,
+    "fullMeetingTranscriptReturned": false,
+    "secretPromptReturned": false,
+    "apiKeyReturned": false
+  },
+  "issues": []
+}
