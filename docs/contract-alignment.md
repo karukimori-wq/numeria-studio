@@ -114,6 +114,8 @@ The screen previews the exact Growth Engine reference payload before export or c
 
 Copy actions use the browser Clipboard API when available and fall back to a temporary textarea copy path when it is not. Both paths copy the same reference-only payload and do not include Report body, PDF body, personal data, payment data, sales data or full transcripts.
 
+Before returning to Growth Engine, the screen shows a Reference Safety checklist. The checklist confirms that only reference IDs and status fields are returned, and that Report bodies, customer master data, payment data, sales data, full transcripts, secret prompts and API keys are excluded.
+
 ## Appraisal Session History
 
 The UI keeps a small local `AppraisalSessionHistory` for recent work continuity.
