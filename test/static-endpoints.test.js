@@ -20,6 +20,12 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/contracts/operational-manifest.json',
     'dist/contracts/ui-readiness',
     'dist/contracts/ui-readiness.json',
+    'dist/contracts/release-checklist',
+    'dist/contracts/release-checklist.json',
+    'dist/contracts/integration-map',
+    'dist/contracts/integration-map.json',
+    'dist/contracts/qa-handoff',
+    'dist/contracts/qa-handoff.json',
     'dist/src/reference-safety.js',
     'dist/src/contract-links.js',
     'dist/app/growth/start/index.html',
@@ -64,6 +70,9 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsOperationalManifest, true);
   assert.equal(contractsStatus.screenFlow.supportsOperationalLinksPanel, true);
   assert.equal(contractsStatus.screenFlow.supportsUiReadinessEndpoint, true);
+  assert.equal(contractsStatus.screenFlow.supportsReleaseChecklistEndpoint, true);
+  assert.equal(contractsStatus.screenFlow.supportsIntegrationMapEndpoint, true);
+  assert.equal(contractsStatus.screenFlow.supportsQaHandoffEndpoint, true);
   assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
     '/contracts/production-flow-result',
     '/contracts/production-flow-result.json',
@@ -79,6 +88,18 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.deepEqual(contractsStatus.staticEndpoints.uiReadiness, [
     '/contracts/ui-readiness',
     '/contracts/ui-readiness.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.releaseChecklist, [
+    '/contracts/release-checklist',
+    '/contracts/release-checklist.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.integrationMap, [
+    '/contracts/integration-map',
+    '/contracts/integration-map.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.qaHandoff, [
+    '/contracts/qa-handoff',
+    '/contracts/qa-handoff.json',
   ]);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
@@ -131,6 +152,18 @@ test('static build publishes health, version, and contracts status endpoints', (
     '/contracts/ui-readiness',
     '/contracts/ui-readiness.json',
   ]);
+  assert.deepEqual(manifest.contractEndpoints.releaseChecklist, [
+    '/contracts/release-checklist',
+    '/contracts/release-checklist.json',
+  ]);
+  assert.deepEqual(manifest.contractEndpoints.integrationMap, [
+    '/contracts/integration-map',
+    '/contracts/integration-map.json',
+  ]);
+  assert.deepEqual(manifest.contractEndpoints.qaHandoff, [
+    '/contracts/qa-handoff',
+    '/contracts/qa-handoff.json',
+  ]);
   assert.equal(manifest.screenEntryPoints.growthStart, '/app/growth/start');
   assert.equal(manifest.sourceOfTruth.session, 'numeria-studio');
   assert.equal(manifest.sourceOfTruth.report, 'numeria-studio');
@@ -169,6 +202,30 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(uiReadiness.dataSafety.customerMasterOwned, false);
   assert.equal(uiReadiness.dataSafety.reportBodyReturnedToGrowthEngine, false);
   assert.equal(uiReadiness.dataSafety.fullMeetingTranscriptReturned, false);
+
+  const releaseChecklist = JSON.parse(readFileSync('dist/contracts/release-checklist', 'utf8'));
+  assert.equal(releaseChecklist.appName, 'numeria-studio');
+  assert.equal(releaseChecklist.status, 'success');
+  assert.equal(releaseChecklist.summary.no, 0);
+  assert.equal(releaseChecklist.items.every((item) => item.answer === 'yes'), true);
+  assert.equal(releaseChecklist.remainingManualChecks.includes('Confirm deployed /app/growth/start starts a session and shows primary CTAs'), true);
+
+  const integrationMap = JSON.parse(readFileSync('dist/contracts/integration-map', 'utf8'));
+  assert.equal(integrationMap.appName, 'numeria-studio');
+  assert.equal(integrationMap.status, 'success');
+  assert.equal(integrationMap.integrationMode, 'reference_ids_only');
+  assert.equal(integrationMap.apps['growth-engine'].returnedFromNumeria.reportBodyReturned, false);
+  assert.equal(integrationMap.apps['growth-engine'].returnedFromNumeria.pdfBodyReturned, false);
+  assert.equal(integrationMap.apps['communication-planner'].payloadPolicy.reportBodySent, false);
+  assert.equal(integrationMap.apps['platform-admin'].storesBusinessData, false);
+
+  const qaHandoff = JSON.parse(readFileSync('dist/contracts/qa-handoff', 'utf8'));
+  assert.equal(qaHandoff.appName, 'numeria-studio');
+  assert.equal(qaHandoff.status, 'success');
+  assert.equal(qaHandoff.publicBaseUrl, 'https://numeria-studio.illusionddt.chatgpt.site');
+  assert.equal(qaHandoff.manualFlows.length, 3);
+  assert.equal(qaHandoff.referenceSafetyChecks.mustNotReturnFields.includes('reportBody'), true);
+  assert.equal(qaHandoff.recommendedSmokeEndpoints.includes('/contracts/qa-handoff'), true);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
@@ -215,6 +272,9 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(linksSource, /\/contracts\/data-boundaries/);
   assert.match(linksSource, /\/contracts\/operational-manifest/);
   assert.match(linksSource, /\/contracts\/ui-readiness/);
+  assert.match(linksSource, /\/contracts\/release-checklist/);
+  assert.match(linksSource, /\/contracts\/integration-map/);
+  assert.match(linksSource, /\/contracts\/qa-handoff/);
   assert.match(linksSource, /参照IDのみ/);
   assert.doesNotMatch(linksSource, /reportBody\s*:/);
   assert.doesNotMatch(linksSource, /paymentStatus\s*:/);
