@@ -27,6 +27,12 @@ await cp('contracts/operational-manifest.json', 'dist/contracts/operational-mani
 await cp('contracts/operational-manifest.json', 'dist/contracts/operational-manifest');
 await cp('contracts/ui-readiness.json', 'dist/contracts/ui-readiness.json');
 await cp('contracts/ui-readiness.json', 'dist/contracts/ui-readiness');
+await cp('contracts/release-checklist.json', 'dist/contracts/release-checklist.json');
+await cp('contracts/release-checklist.json', 'dist/contracts/release-checklist');
+await cp('contracts/integration-map.json', 'dist/contracts/integration-map.json');
+await cp('contracts/integration-map.json', 'dist/contracts/integration-map');
+await cp('contracts/qa-handoff.json', 'dist/contracts/qa-handoff.json');
+await cp('contracts/qa-handoff.json', 'dist/contracts/qa-handoff');
 await writeFile('dist/health', `${JSON.stringify({ appName, status: 'ok', timestamp }, null, 2)}\n`);
 await writeFile('dist/version', `${JSON.stringify({ appName, appVersion, contractVersion, commitSha: 'optional', timestamp }, null, 2)}\n`);
 console.log('Built static site into dist/');
