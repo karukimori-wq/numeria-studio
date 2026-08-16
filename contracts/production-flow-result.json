@@ -1,0 +1,43 @@
+{
+  "appName": "numeria-studio",
+  "flowName": "growth-to-numeria-screen-start",
+  "status": "ready",
+  "checkedAt": "static-build-time",
+  "entryPoint": "/app/growth/start",
+  "acceptedRefs": [
+    "workspaceId",
+    "userId",
+    "reservationId",
+    "customerId",
+    "intent",
+    "traceId",
+    "correlationId",
+    "returnUrl"
+  ],
+  "returnedRefs": [
+    "sessionId",
+    "reportId",
+    "reportRef",
+    "sessionStatus",
+    "reportStatus",
+    "completedAt"
+  ],
+  "screenFlow": [
+    "Growth Engine reservation detail opens Numeria with reference IDs only",
+    "Numeria starts a Session and issues sessionId/reportId",
+    "User can continue to appraisal creation or Report creation",
+    "User can complete the Session and return to Growth Engine follow-up",
+    "Return URL carries reference IDs and status fields only"
+  ],
+  "dataSafety": {
+    "paymentStatusAccepted": false,
+    "salesAmountAccepted": false,
+    "reportBodyReturnedToGrowthEngine": false,
+    "pdfBodyReturnedToGrowthEngine": false,
+    "customerMasterReturned": false,
+    "fullMeetingTranscriptReturned": false,
+    "secretPromptReturned": false,
+    "apiKeyReturned": false
+  },
+  "issues": []
+}
