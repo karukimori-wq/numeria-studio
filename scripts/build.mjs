@@ -20,6 +20,8 @@ await cp('contracts/status.json', 'dist/contracts/status.json');
 await cp('contracts/status.json', 'dist/contracts/status');
 await cp('contracts/production-flow-result.json', 'dist/contracts/production-flow-result.json');
 await cp('contracts/production-flow-result.json', 'dist/contracts/production-flow-result');
+await cp('contracts/data-boundaries.json', 'dist/contracts/data-boundaries.json');
+await cp('contracts/data-boundaries.json', 'dist/contracts/data-boundaries');
 await writeFile('dist/health', `${JSON.stringify({ appName, status: 'ok', timestamp }, null, 2)}\n`);
 await writeFile('dist/version', `${JSON.stringify({ appName, appVersion, contractVersion, commitSha: 'optional', timestamp }, null, 2)}\n`);
 console.log('Built static site into dist/');
