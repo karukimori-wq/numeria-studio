@@ -75,6 +75,7 @@
     "supportsSessionRestoreNotice": true,
     "supportsReferencePayloadPreview": true,
     "supportsReferencePayloadCopy": true,
+    "supportsClipboardFallback": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
