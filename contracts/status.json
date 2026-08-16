@@ -80,6 +80,7 @@
     "supportsDataBoundaryEndpoint": true,
     "supportsOperationalManifest": true,
     "supportsOperationalLinksPanel": true,
+    "supportsUiReadinessEndpoint": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
@@ -101,6 +102,10 @@
     "operationalManifest": [
       "/contracts/operational-manifest",
       "/contracts/operational-manifest.json"
+    ],
+    "uiReadiness": [
+      "/contracts/ui-readiness",
+      "/contracts/ui-readiness.json"
     ],
     "growthStartScreen": "/app/growth/start",
     "sessionScreenPattern": "/app/sessions/{sessionId}"
