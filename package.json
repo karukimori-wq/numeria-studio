@@ -6,7 +6,8 @@
   "scripts": {
     "start": "python3 -m http.server 5173",
     "build": "node scripts/build.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "smoke": "node --test test/static-endpoints.test.js"
   },
   "dependencies": {},
   "devDependencies": {}
