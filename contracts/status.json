@@ -78,6 +78,7 @@
     "supportsClipboardFallback": true,
     "supportsReferenceSafetyChecklist": true,
     "supportsDataBoundaryEndpoint": true,
+    "supportsOperationalManifest": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
@@ -95,6 +96,10 @@
     "dataBoundaries": [
       "/contracts/data-boundaries",
       "/contracts/data-boundaries.json"
+    ],
+    "operationalManifest": [
+      "/contracts/operational-manifest",
+      "/contracts/operational-manifest.json"
     ],
     "growthStartScreen": "/app/growth/start",
     "sessionScreenPattern": "/app/sessions/{sessionId}"
