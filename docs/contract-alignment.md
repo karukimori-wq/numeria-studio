@@ -130,6 +130,8 @@ This history is a Numeria-owned appraisal/session snapshot and stores:
 
 It does not store a Customer master, Report body, PDF body, local draft names, birthdays, payment status, sales amount, or full transcripts.
 
+History links restore `sessionId`, `reportId`, `sessionStatus`, `reportStatus`, and `completedAt` from `/app/sessions/{sessionId}` URLs and query parameters. This restore path also uses reference IDs only.
+
 ## Data Safety
 
 Numeria must not receive, store as canonical data, log, or send to other apps:
