@@ -6,6 +6,9 @@ const operationalLinks = [
   { label: 'Data Boundaries', href: '/contracts/data-boundaries' },
   { label: 'Operational Manifest', href: '/contracts/operational-manifest' },
   { label: 'UI Readiness', href: '/contracts/ui-readiness' },
+  { label: 'Release Checklist', href: '/contracts/release-checklist' },
+  { label: 'Integration Map', href: '/contracts/integration-map' },
+  { label: 'QA Handoff', href: '/contracts/qa-handoff' },
 ];
 
 function createOperationalLinksPanel() {
