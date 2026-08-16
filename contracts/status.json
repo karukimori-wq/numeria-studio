@@ -76,6 +76,7 @@
     "supportsReferencePayloadPreview": true,
     "supportsReferencePayloadCopy": true,
     "supportsClipboardFallback": true,
+    "supportsReferenceSafetyChecklist": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
