@@ -127,6 +127,10 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(manifest.healthEndpoints.health, '/health');
   assert.equal(manifest.healthEndpoints.version, '/version');
   assert.equal(manifest.healthEndpoints.contractsStatus, '/contracts/status');
+  assert.deepEqual(manifest.contractEndpoints.uiReadiness, [
+    '/contracts/ui-readiness',
+    '/contracts/ui-readiness.json',
+  ]);
   assert.equal(manifest.screenEntryPoints.growthStart, '/app/growth/start');
   assert.equal(manifest.sourceOfTruth.session, 'numeria-studio');
   assert.equal(manifest.sourceOfTruth.report, 'numeria-studio');
@@ -158,6 +162,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(uiReadiness.ctaLabels.includes('鑑定作成へ進む'), true);
   assert.equal(uiReadiness.ctaLabels.includes('Report作成へ進む'), true);
   assert.equal(uiReadiness.ctaLabels.includes('Growth Engineのフォロー画面へ戻る'), true);
+  assert.equal(uiReadiness.operationalLinks.includes('/contracts/ui-readiness'), true);
   assert.equal(uiReadiness.dataSafety.referenceIdsOnly, true);
   assert.equal(uiReadiness.dataSafety.paymentStatusAccepted, false);
   assert.equal(uiReadiness.dataSafety.salesAmountAccepted, false);
@@ -209,6 +214,7 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(linksSource, /\/contracts\/production-flow-result/);
   assert.match(linksSource, /\/contracts\/data-boundaries/);
   assert.match(linksSource, /\/contracts\/operational-manifest/);
+  assert.match(linksSource, /\/contracts\/ui-readiness/);
   assert.match(linksSource, /参照IDのみ/);
   assert.doesNotMatch(linksSource, /reportBody\s*:/);
   assert.doesNotMatch(linksSource, /paymentStatus\s*:/);
