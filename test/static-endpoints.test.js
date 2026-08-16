@@ -208,6 +208,9 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(releaseChecklist.status, 'success');
   assert.equal(releaseChecklist.summary.no, 0);
   assert.equal(releaseChecklist.items.every((item) => item.answer === 'yes'), true);
+  assert.equal(releaseChecklist.summary.yes, 10);
+  assert.equal(releaseChecklist.items.some((item) => item.id === 'release_readme_available'), true);
+  assert.equal(releaseChecklist.items.some((item) => item.id === 'manual_smoke_test_available'), true);
   assert.equal(releaseChecklist.remainingManualChecks.includes('Confirm deployed /app/growth/start starts a session and shows primary CTAs'), true);
 
   const integrationMap = JSON.parse(readFileSync('dist/contracts/integration-map', 'utf8'));
@@ -290,4 +293,24 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(appSource, /No customer master, payment, sales, transcript, or report body/);
   assert.doesNotMatch(appSource, /paymentStatus:\s*payload/);
   assert.doesNotMatch(appSource, /salesAmount:\s*payload/);
+});
+
+test('release documentation and smoke script are present', () => {
+  const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+  const readme = readFileSync('README.md', 'utf8');
+  const releaseStatus = readFileSync('docs/release-status.md', 'utf8');
+  const manualSmoke = readFileSync('docs/manual-smoke-test.md', 'utf8');
+
+  assert.equal(pkg.scripts.smoke, 'node --test test/static-endpoints.test.js');
+  assert.match(readme, /Numeria Studio/);
+  assert.match(readme, /reference IDs only/);
+  assert.match(readme, /\/contracts\/qa-handoff/);
+  assert.match(releaseStatus, /Current status: `success`/);
+  assert.match(releaseStatus, /Remaining Manual Checks/);
+  assert.match(manualSmoke, /Manual Smoke Test/);
+  assert.match(manualSmoke, /\/app\/growth\/start\?workspaceId=ws_test_001/);
+  assert.match(manualSmoke, /It must not contain:/);
+  for (const forbidden of ['reportBody', 'pdfBody', 'paymentStatus', 'salesAmount', 'fullMeetingTranscript', 'apiKey', 'secretPrompt']) {
+    assert.match(manualSmoke, new RegExp(forbidden));
+  }
 });
