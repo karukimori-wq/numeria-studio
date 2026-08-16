@@ -14,6 +14,8 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/contracts/status.json',
     'dist/contracts/production-flow-result',
     'dist/contracts/production-flow-result.json',
+    'dist/contracts/data-boundaries',
+    'dist/contracts/data-boundaries.json',
     'dist/src/reference-safety.js',
     'dist/app/growth/start/index.html',
     'dist/app/sessions/sample/index.html',
@@ -53,9 +55,14 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadCopy, true);
   assert.equal(contractsStatus.screenFlow.supportsClipboardFallback, true);
   assert.equal(contractsStatus.screenFlow.supportsReferenceSafetyChecklist, true);
+  assert.equal(contractsStatus.screenFlow.supportsDataBoundaryEndpoint, true);
   assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
     '/contracts/production-flow-result',
     '/contracts/production-flow-result.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.dataBoundaries, [
+    '/contracts/data-boundaries',
+    '/contracts/data-boundaries.json',
   ]);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
@@ -70,6 +77,32 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(productionFlow.dataSafety.reportBodyReturnedToGrowthEngine, false);
   assert.equal(productionFlow.dataSafety.customerMasterReturned, false);
   assert.equal(productionFlow.dataSafety.fullMeetingTranscriptReturned, false);
+
+  const dataBoundaries = JSON.parse(readFileSync('dist/contracts/data-boundaries', 'utf8'));
+  assert.equal(dataBoundaries.appName, 'numeria-studio');
+  assert.equal(dataBoundaries.status, 'success');
+  assert.equal(dataBoundaries.integrationMode, 'reference_ids_only');
+  assert.equal(dataBoundaries.owns.includes('Session'), true);
+  assert.equal(dataBoundaries.owns.includes('Report'), true);
+  assert.equal(dataBoundaries.owns.includes('AppraisalLogic'), true);
+  for (const ownedElsewhere of ['Customer', 'Reservation', 'Payment', 'Sales', 'Conversation', 'Message', 'ReplyDraft', 'SafetyCheck', 'MessageDraft', 'AIActivity']) {
+    assert.equal(dataBoundaries.doesNotOwn.includes(ownedElsewhere), true);
+  }
+  for (const prohibited of ['paymentStatus', 'salesAmount', 'fullMeetingTranscript', 'apiKey', 'accessToken', 'secretPrompt']) {
+    assert.equal(dataBoundaries.prohibitedInboundFields.includes(prohibited), true);
+  }
+  for (const prohibited of ['reportBody', 'pdfBody', 'fullReportBody', 'fullAppraisalText', 'fullMeetingTranscript', 'paymentStatus', 'salesAmount', 'apiKey', 'accessToken', 'secretPrompt']) {
+    assert.equal(dataBoundaries.prohibitedOutboundFields.includes(prohibited), true);
+  }
+  assert.equal(dataBoundaries.externalAppBoundaries['growth-engine'].receivesRefsOnly, true);
+  assert.equal(dataBoundaries.externalAppBoundaries['growth-engine'].reportBodyReturned, false);
+  assert.equal(dataBoundaries.externalAppBoundaries['growth-engine'].paymentOrSalesReturned, false);
+  assert.equal(dataBoundaries.externalAppBoundaries['communication-planner'].receivesRefsOnly, true);
+  assert.equal(dataBoundaries.externalAppBoundaries['communication-planner'].reportBodySent, false);
+  assert.equal(dataBoundaries.externalAppBoundaries['communication-planner'].conversationOwnedByNumeria, false);
+  assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].receivesRefsOnly, true);
+  assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].secretPromptSent, false);
+  assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].fullTranscriptSent, false);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
