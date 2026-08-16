@@ -51,10 +51,22 @@
       "answer": "yes",
       "evidence": "test/static-endpoints.test.js covers build outputs and data-safety assertions",
       "issue": null
+    },
+    {
+      "id": "release_readme_available",
+      "answer": "yes",
+      "evidence": "README.md documents public URL, contract endpoints, data boundaries, and local commands",
+      "issue": null
+    },
+    {
+      "id": "manual_smoke_test_available",
+      "answer": "yes",
+      "evidence": "docs/manual-smoke-test.md documents deployed endpoint and screen-flow checks",
+      "issue": null
     }
   ],
   "summary": {
-    "yes": 8,
+    "yes": 10,
     "no": 0,
     "notApplicable": 0
   },
