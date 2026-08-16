@@ -19,6 +19,7 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/contracts/operational-manifest',
     'dist/contracts/operational-manifest.json',
     'dist/src/reference-safety.js',
+    'dist/src/contract-links.js',
     'dist/app/growth/start/index.html',
     'dist/app/sessions/sample/index.html',
   ]) {
@@ -59,6 +60,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsReferenceSafetyChecklist, true);
   assert.equal(contractsStatus.screenFlow.supportsDataBoundaryEndpoint, true);
   assert.equal(contractsStatus.screenFlow.supportsOperationalManifest, true);
+  assert.equal(contractsStatus.screenFlow.supportsOperationalLinksPanel, true);
   assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
     '/contracts/production-flow-result',
     '/contracts/production-flow-result.json',
@@ -141,6 +143,7 @@ test('static build publishes health, version, and contracts status endpoints', (
 test('growth screen source keeps Growth payload reference-id only', () => {
   const appSource = readFileSync('src/main.js', 'utf8');
   const safetySource = readFileSync('src/reference-safety.js', 'utf8');
+  const linksSource = readFileSync('src/contract-links.js', 'utf8');
   for (const ref of ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent', 'traceId', 'correlationId', 'returnUrl']) {
     assert.match(appSource, new RegExp(`['"]${ref}['"]`));
   }
@@ -172,6 +175,18 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(safetySource, /売上情報なし/);
   assert.match(safetySource, /ensureReferenceSafetyChecklist/);
   assert.match(safetySource, /document\.querySelector\('\.safety-checklist'\)/);
+  assert.match(linksSource, /Operational Links/);
+  assert.match(linksSource, /operationalLinks/);
+  assert.match(linksSource, /\/health/);
+  assert.match(linksSource, /\/version/);
+  assert.match(linksSource, /\/contracts\/status/);
+  assert.match(linksSource, /\/contracts\/production-flow-result/);
+  assert.match(linksSource, /\/contracts\/data-boundaries/);
+  assert.match(linksSource, /\/contracts\/operational-manifest/);
+  assert.match(linksSource, /参照IDのみ/);
+  assert.doesNotMatch(linksSource, /reportBody\s*:/);
+  assert.doesNotMatch(linksSource, /paymentStatus\s*:/);
+  assert.doesNotMatch(linksSource, /salesAmount\s*:/);
   assert.match(appSource, /参照IDをコピー/);
   assert.match(appSource, /historyStoreKey = 'numeria-appraisal-session-history'/);
   assert.match(appSource, /Appraisal Session History/);
