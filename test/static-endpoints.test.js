@@ -12,6 +12,7 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/version',
     'dist/contracts/status',
     'dist/contracts/status.json',
+    'dist/src/reference-safety.js',
     'dist/app/growth/start/index.html',
     'dist/app/sessions/sample/index.html',
   ]) {
@@ -49,12 +50,14 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadPreview, true);
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadCopy, true);
   assert.equal(contractsStatus.screenFlow.supportsClipboardFallback, true);
+  assert.equal(contractsStatus.screenFlow.supportsReferenceSafetyChecklist, true);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
   const appSource = readFileSync('src/main.js', 'utf8');
+  const safetySource = readFileSync('src/reference-safety.js', 'utf8');
   for (const ref of ['workspaceId', 'userId', 'reservationId', 'customerId', 'intent', 'traceId', 'correlationId', 'returnUrl']) {
     assert.match(appSource, new RegExp(`['"]${ref}['"]`));
   }
@@ -69,6 +72,7 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(appSource, /function buildAppraisalSessionSnapshot/);
   assert.match(appSource, /function readSessionContextFromUrl/);
   assert.match(appSource, /function renderSessionRestoreNotice/);
+  assert.match(safetySource, /function ensureReferenceSafetyChecklist/);
   assert.match(appSource, /allowedSessionRefs/);
   assert.match(appSource, /pathSessionId/);
   assert.match(appSource, /decodeURIComponent\(pathSessionId\)/);
@@ -80,6 +84,11 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(appSource, /function copyText/);
   assert.match(appSource, /document\.execCommand\('copy'\)/);
   assert.match(appSource, /コピー未対応/);
+  assert.match(safetySource, /Reference Safety/);
+  assert.match(safetySource, /Report本文なし/);
+  assert.match(safetySource, /売上情報なし/);
+  assert.match(safetySource, /ensureReferenceSafetyChecklist/);
+  assert.match(safetySource, /document\.querySelector\('\.safety-checklist'\)/);
   assert.match(appSource, /参照IDをコピー/);
   assert.match(appSource, /historyStoreKey = 'numeria-appraisal-session-history'/);
   assert.match(appSource, /Appraisal Session History/);
