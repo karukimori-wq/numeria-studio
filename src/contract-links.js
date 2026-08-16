@@ -5,6 +5,7 @@ const operationalLinks = [
   { label: 'Production Flow', href: '/contracts/production-flow-result' },
   { label: 'Data Boundaries', href: '/contracts/data-boundaries' },
   { label: 'Operational Manifest', href: '/contracts/operational-manifest' },
+  { label: 'UI Readiness', href: '/contracts/ui-readiness' },
 ];
 
 function createOperationalLinksPanel() {
