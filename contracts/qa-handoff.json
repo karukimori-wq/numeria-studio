@@ -1,0 +1,71 @@
+{
+  "appName": "numeria-studio",
+  "handoffVersion": "qa-handoff-0.1.0",
+  "status": "success",
+  "checkedAt": "static-build-time",
+  "publicBaseUrl": "https://numeria-studio.illusionddt.chatgpt.site",
+  "manualFlows": [
+    {
+      "id": "growth_to_numeria_start",
+      "entryPoint": "/app/growth/start?workspaceId=ws_test_001&userId=user_test_owner_001&reservationId=reservation_test_001&customerId=customer_test_001&intent=start_appraisal_session",
+      "expected": [
+        "Session start succeeds",
+        "sessionId is visible",
+        "primary CTAs are visible",
+        "Report creation path is available",
+        "Growth follow-up return uses refs only"
+      ]
+    },
+    {
+      "id": "session_restore_by_url",
+      "entryPoint": "/app/sessions/session_test_001?workspaceId=ws_test_001&userId=user_test_owner_001&reservationId=reservation_test_001&customerId=customer_test_001",
+      "expected": [
+        "Session restore notice is visible",
+        "reference payload preview is visible",
+        "Report body and personal data are not restored from URL"
+      ]
+    },
+    {
+      "id": "contract_endpoint_smoke",
+      "entryPoint": "/contracts/status",
+      "expected": [
+        "HTTP 200",
+        "JSON response",
+        "top-level status is success",
+        "professionalIdRequired is false",
+        "usesReportTerminology is true"
+      ]
+    }
+  ],
+  "referenceSafetyChecks": {
+    "mustShowRefs": [
+      "sessionId",
+      "reportId",
+      "reportRef"
+    ],
+    "mustNotReturnFields": [
+      "reportBody",
+      "pdfBody",
+      "fullReportBody",
+      "fullAppraisalText",
+      "fullMeetingTranscript",
+      "paymentStatus",
+      "salesAmount",
+      "apiKey",
+      "secretPrompt"
+    ]
+  },
+  "recommendedSmokeEndpoints": [
+    "/health",
+    "/version",
+    "/contracts/status",
+    "/contracts/production-flow-result",
+    "/contracts/data-boundaries",
+    "/contracts/operational-manifest",
+    "/contracts/ui-readiness",
+    "/contracts/release-checklist",
+    "/contracts/integration-map",
+    "/contracts/qa-handoff"
+  ],
+  "issues": []
+}
