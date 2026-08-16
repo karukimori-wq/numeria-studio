@@ -90,6 +90,8 @@ The static build publishes these unauthenticated monitoring endpoints:
 - `/version`
 - `/contracts/status`
 - `/contracts/status.json`
+- `/contracts/production-flow-result`
+- `/contracts/production-flow-result.json`
 
 ## Growth Engine Screen Start
 
