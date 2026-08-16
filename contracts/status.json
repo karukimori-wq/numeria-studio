@@ -77,6 +77,7 @@
     "supportsReferencePayloadCopy": true,
     "supportsClipboardFallback": true,
     "supportsReferenceSafetyChecklist": true,
+    "supportsDataBoundaryEndpoint": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
@@ -90,6 +91,10 @@
     "productionFlowResult": [
       "/contracts/production-flow-result",
       "/contracts/production-flow-result.json"
+    ],
+    "dataBoundaries": [
+      "/contracts/data-boundaries",
+      "/contracts/data-boundaries.json"
     ],
     "growthStartScreen": "/app/growth/start",
     "sessionScreenPattern": "/app/sessions/{sessionId}"
