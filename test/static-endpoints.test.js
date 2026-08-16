@@ -48,6 +48,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsSessionRestoreNotice, true);
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadPreview, true);
   assert.equal(contractsStatus.screenFlow.supportsReferencePayloadCopy, true);
+  assert.equal(contractsStatus.screenFlow.supportsClipboardFallback, true);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
 });
@@ -76,6 +77,9 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(appSource, /reference-preview/);
   assert.match(appSource, /Growth Engineへ返す参照ID payloadを確認/);
   assert.match(appSource, /function copyReferenceJson/);
+  assert.match(appSource, /function copyText/);
+  assert.match(appSource, /document\.execCommand\('copy'\)/);
+  assert.match(appSource, /コピー未対応/);
   assert.match(appSource, /参照IDをコピー/);
   assert.match(appSource, /historyStoreKey = 'numeria-appraisal-session-history'/);
   assert.match(appSource, /Appraisal Session History/);
