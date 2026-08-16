@@ -132,6 +132,8 @@ It does not store a Customer master, Report body, PDF body, local draft names, b
 
 History links restore `sessionId`, `reportId`, `sessionStatus`, `reportStatus`, and `completedAt` from `/app/sessions/{sessionId}` URLs and query parameters. This restore path also uses reference IDs only.
 
+Session routes show a restore notice so the user can confirm the active `sessionId` and related refs. The notice explicitly states that Report body, PDF body, personal names, payment data, sales data, and full appraisal notes are not restored from the URL.
+
 ## Data Safety
 
 Numeria must not receive, store as canonical data, log, or send to other apps:
