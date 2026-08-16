@@ -26,6 +26,10 @@
     "operationalManifest": [
       "/contracts/operational-manifest",
       "/contracts/operational-manifest.json"
+    ],
+    "uiReadiness": [
+      "/contracts/ui-readiness",
+      "/contracts/ui-readiness.json"
     ]
   },
   "screenEntryPoints": {
