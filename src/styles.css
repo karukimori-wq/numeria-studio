@@ -228,6 +228,31 @@ code {
   gap: 10px;
 }
 
+.reference-preview {
+  border-radius: 16px;
+  background: #fffdf9;
+  border: 1px solid rgba(87, 68, 114, 0.1);
+  overflow: hidden;
+}
+
+.reference-preview summary {
+  cursor: pointer;
+  padding: 14px 16px;
+  color: #4c4058;
+  font-weight: 900;
+}
+
+.reference-preview pre {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  padding: 16px;
+  background: #2d2438;
+  color: #fffdf9;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
 .history-panel {
   display: grid;
   gap: 16px;
