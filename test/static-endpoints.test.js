@@ -16,6 +16,8 @@ test('static build publishes health, version, and contracts status endpoints', (
     'dist/contracts/production-flow-result.json',
     'dist/contracts/data-boundaries',
     'dist/contracts/data-boundaries.json',
+    'dist/contracts/operational-manifest',
+    'dist/contracts/operational-manifest.json',
     'dist/src/reference-safety.js',
     'dist/app/growth/start/index.html',
     'dist/app/sessions/sample/index.html',
@@ -56,6 +58,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsClipboardFallback, true);
   assert.equal(contractsStatus.screenFlow.supportsReferenceSafetyChecklist, true);
   assert.equal(contractsStatus.screenFlow.supportsDataBoundaryEndpoint, true);
+  assert.equal(contractsStatus.screenFlow.supportsOperationalManifest, true);
   assert.deepEqual(contractsStatus.staticEndpoints.productionFlowResult, [
     '/contracts/production-flow-result',
     '/contracts/production-flow-result.json',
@@ -63,6 +66,10 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.deepEqual(contractsStatus.staticEndpoints.dataBoundaries, [
     '/contracts/data-boundaries',
     '/contracts/data-boundaries.json',
+  ]);
+  assert.deepEqual(contractsStatus.staticEndpoints.operationalManifest, [
+    '/contracts/operational-manifest',
+    '/contracts/operational-manifest.json',
   ]);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
@@ -103,6 +110,32 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].receivesRefsOnly, true);
   assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].secretPromptSent, false);
   assert.equal(dataBoundaries.externalAppBoundaries['ai-platform-core'].fullTranscriptSent, false);
+
+  const manifest = JSON.parse(readFileSync('dist/contracts/operational-manifest', 'utf8'));
+  assert.equal(manifest.appName, 'numeria-studio');
+  assert.equal(manifest.status, 'success');
+  assert.equal(manifest.baseUrl, 'https://numeria-studio.illusionddt.chatgpt.site');
+  assert.equal(manifest.healthEndpoints.health, '/health');
+  assert.equal(manifest.healthEndpoints.version, '/version');
+  assert.equal(manifest.healthEndpoints.contractsStatus, '/contracts/status');
+  assert.equal(manifest.screenEntryPoints.growthStart, '/app/growth/start');
+  assert.equal(manifest.sourceOfTruth.session, 'numeria-studio');
+  assert.equal(manifest.sourceOfTruth.report, 'numeria-studio');
+  assert.equal(manifest.sourceOfTruth.customer, 'growth-engine');
+  assert.equal(manifest.sourceOfTruth.conversation, 'communication-planner');
+  assert.equal(manifest.sourceOfTruth.aiActivity, 'ai-platform-core');
+  assert.equal(manifest.crossAppPayloadPolicy.mode, 'reference_ids_only');
+  for (const ref of ['workspaceId', 'userId', 'reservationId', 'customerId', 'sessionId', 'reportId', 'reportRef', 'traceId', 'correlationId']) {
+    assert.equal(manifest.crossAppPayloadPolicy.allowedRefs.includes(ref), true);
+  }
+  for (const prohibited of ['paymentStatus', 'salesAmount', 'customerMaster', 'reportBody', 'pdfBody', 'fullReportBody', 'fullAppraisalText', 'fullMeetingTranscript', 'apiKey', 'accessToken', 'secretPrompt']) {
+    assert.equal(manifest.crossAppPayloadPolicy.prohibitedFields.includes(prohibited), true);
+  }
+  assert.deepEqual(manifest.stableEvents, [
+    'studio.session.started.v1',
+    'studio.session.completed.v1',
+    'studio.report.generated.v1',
+  ]);
 });
 
 test('growth screen source keeps Growth payload reference-id only', () => {
