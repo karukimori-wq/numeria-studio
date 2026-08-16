@@ -45,6 +45,7 @@ test('static build publishes health, version, and contracts status endpoints', (
   assert.equal(contractsStatus.screenFlow.supportsReferenceOnlyExport, true);
   assert.equal(contractsStatus.screenFlow.supportsLocalAppraisalSessionHistory, true);
   assert.equal(contractsStatus.screenFlow.supportsSessionUrlRestore, true);
+  assert.equal(contractsStatus.screenFlow.supportsSessionRestoreNotice, true);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresReportBody, false);
   assert.equal(contractsStatus.screenFlow.localHistoryStoresCustomerMaster, false);
 });
@@ -64,9 +65,12 @@ test('growth screen source keeps Growth payload reference-id only', () => {
   assert.match(appSource, /function buildReferenceExport/);
   assert.match(appSource, /function buildAppraisalSessionSnapshot/);
   assert.match(appSource, /function readSessionContextFromUrl/);
+  assert.match(appSource, /function renderSessionRestoreNotice/);
   assert.match(appSource, /allowedSessionRefs/);
   assert.match(appSource, /pathSessionId/);
   assert.match(appSource, /decodeURIComponent\(pathSessionId\)/);
+  assert.match(appSource, /Session Restored/);
+  assert.match(appSource, /Report本文、PDF本文、個人名、支払い、売上、全文カルテはURLから復元しません/);
   assert.match(appSource, /historyStoreKey = 'numeria-appraisal-session-history'/);
   assert.match(appSource, /Appraisal Session History/);
   assert.match(appSource, /studio\.session\.completed\.v1/);
