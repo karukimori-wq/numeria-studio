@@ -81,6 +81,9 @@
     "supportsOperationalManifest": true,
     "supportsOperationalLinksPanel": true,
     "supportsUiReadinessEndpoint": true,
+    "supportsReleaseChecklistEndpoint": true,
+    "supportsIntegrationMapEndpoint": true,
+    "supportsQaHandoffEndpoint": true,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
@@ -106,6 +109,18 @@
     "uiReadiness": [
       "/contracts/ui-readiness",
       "/contracts/ui-readiness.json"
+    ],
+    "releaseChecklist": [
+      "/contracts/release-checklist",
+      "/contracts/release-checklist.json"
+    ],
+    "integrationMap": [
+      "/contracts/integration-map",
+      "/contracts/integration-map.json"
+    ],
+    "qaHandoff": [
+      "/contracts/qa-handoff",
+      "/contracts/qa-handoff.json"
     ],
     "growthStartScreen": "/app/growth/start",
     "sessionScreenPattern": "/app/sessions/{sessionId}"
