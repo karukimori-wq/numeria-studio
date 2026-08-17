@@ -18,6 +18,7 @@ await cp('src/report-composer.js', 'dist/src/report-composer.js');
 await cp('src/reference-safety.js', 'dist/src/reference-safety.js');
 await cp('src/contract-links.js', 'dist/src/contract-links.js');
 await cp('src/styles.css', 'dist/src/styles.css');
+await cp('src/report-composer.css', 'dist/src/report-composer.css');
 await cp('contracts/status.json', 'dist/contracts/status.json');
 await cp('contracts/status.json', 'dist/contracts/status');
 await cp('contracts/production-flow-result.json', 'dist/contracts/production-flow-result.json');
