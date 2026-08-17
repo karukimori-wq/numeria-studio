@@ -11,7 +11,11 @@
     "sessionStartCanContinueToReport": true,
     "sessionStartCanReturnToGrowthFollowup": true,
     "sessionUrlRestoreSupported": true,
-    "operationalLinksVisible": true
+    "operationalLinksVisible": true,
+    "reportComposerShowsCalculationResults": true,
+    "reportComposerShowsAppraisalDiagram": true,
+    "reportComposerSupportsMaterialInsert": true,
+    "reportComposerKeepsReportBodyLocal": true
   },
   "requiredVisibleRefs": [
     "sessionId",
@@ -22,6 +26,15 @@
     "鑑定作成へ進む",
     "Report作成へ進む",
     "Growth Engineのフォロー画面へ戻る"
+  ],
+  "reportComposerVisibleMaterials": [
+    "lifePath",
+    "personalYear",
+    "theme",
+    "method",
+    "tone",
+    "actionPeriod",
+    "appraisalDiagram"
   ],
   "operationalLinks": [
     "/health",
@@ -39,6 +52,8 @@
     "customerMasterOwned": false,
     "reportBodyReturnedToGrowthEngine": false,
     "pdfBodyReturnedToGrowthEngine": false,
+    "calculationResultsReturnedToGrowthEngine": false,
+    "appraisalDiagramReturnedToGrowthEngine": false,
     "fullMeetingTranscriptReturned": false,
     "secretPromptReturned": false,
     "apiKeyReturned": false
