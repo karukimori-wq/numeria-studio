@@ -84,6 +84,12 @@
     "supportsReleaseChecklistEndpoint": true,
     "supportsIntegrationMapEndpoint": true,
     "supportsQaHandoffEndpoint": true,
+    "supportsReportComposerMaterialPanel": true,
+    "supportsCalculationResultPanel": true,
+    "supportsAppraisalDiagramPanel": true,
+    "supportsReportMaterialInsert": true,
+    "reportComposerKeepsReportBodyLocal": true,
+    "reportComposerSendsCalculationResultsToGrowthEngine": false,
     "localHistoryStoresReportBody": false,
     "localHistoryStoresCustomerMaster": false
   },
